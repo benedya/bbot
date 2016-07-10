@@ -11,20 +11,27 @@ class BotRequestProcessBuilder
     protected $botRequest;
     protected $userId;
     protected $sendMsgFromCli;
+    protected $botBridge;
 
-    function __construct($requestData, $userId, $sendMsgFromCli = false)
+    function __construct($userId, $sendMsgFromCli = false)
     {
-        $this->botRequest = $this->createMessengerRequest($requestData);
         $this->userId = $userId;
         $this->sendMsgFromCli = $sendMsgFromCli;
     }
 
     /**
      * @return BotApp
+     * @throws \Exception
      */
     public function createBotApp()
     {
-        return new BotApp($this->createMessengerBotBridge(), $this->botRequest);
+        if(!$this->botBridge) {
+            throw new \Exception('Bot bridge was not set.');
+        }
+        if(!$this->botRequest) {
+            throw new \Exception('Bot request was not set.');
+        }
+        return new BotApp($this->botBridge, $this->botRequest);
     }
 
     public static function createPostBackRequest($handler, $action, array $data = [])
@@ -45,19 +52,38 @@ class BotRequestProcessBuilder
         ];
     }
 
+    /**
+     * @param $pageToken
+     * @param $requestData
+     * @param array $requestConf
+     * @return $this
+     */
+    public function initMessengerBotRequest($pageToken, $requestData, array $requestConf = [])
+    {
+        $this->createMessengerBotBridge($pageToken);
+        $this->createMessengerRequest($requestData, $requestConf);
+        return $this;
+    }
+
+    /**
+     * @param $pageToken
+     * @return $this
+     */
     protected function createMessengerBotBridge($pageToken)
     {
-        return new MessengerBotBridge(
+        $this->botBridge = new MessengerBotBridge(
             $pageToken,
             $this->userId,
             $this->sendMsgFromCli
         );
+        return $this;
     }
 
-    protected function createMessengerRequest($requestData)
+    protected function createMessengerRequest($requestData, array $requestConf = [])
     {
-        return (new MessengerRequest($requestData))
+        $this->botRequest = (new \Bbot\Request\MessengerRequest($requestData, $requestConf))
             ->processRequestData();
+        return $this;
     }
 
     /**

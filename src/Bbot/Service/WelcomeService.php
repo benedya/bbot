@@ -2,7 +2,7 @@
 
 namespace Bbot\Service;
 
-use Application\Bot\Request\AbstractBotRequest;
+use Bbot\Request\AbstractBotRequest;
 
 class WelcomeService extends AbstractBotService
 {

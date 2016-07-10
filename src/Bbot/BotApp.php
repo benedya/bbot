@@ -1,6 +1,6 @@
 <?php
 
-namespace BBot;
+namespace Bbot;
 
 use Bbot\Bridge\BotBridgeInterface;
 use Bbot\Request\AbstractBotRequest;
@@ -18,7 +18,7 @@ class BotApp extends Container
     function __construct(BotBridgeInterface $botBridge, AbstractBotRequest $botRequest)
     {
         $this['welcome'] = $this->share(function() {
-            return new \Application\Bot\Handler\WelcomeHandler($this);
+            return new \Bbot\Handler\WelcomeHandler($this);
         });
         // service section
         $this['service.welcome'] = $this->share(function() use($botBridge, $botRequest) {

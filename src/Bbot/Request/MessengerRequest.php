@@ -1,17 +1,22 @@
 <?php
 
-namespace BBot\Request;
+namespace Bbot\Request;
 
 class MessengerRequest extends AbstractBotRequest
 {
     protected $requestData;
     protected $delimiter = '___';
     protected $isPostBack;
+    protected $conf = [
+        'textHandler' => 'common',
+        'textAction' => 'index',
+    ];
 
-    function __construct(array $data)
+    function __construct(array $data, array $conf = [])
     {
         $this->requestData = $data;
         $this->isPostBack = false;
+        $this->conf = array_merge($this->conf, $conf);
     }
 
     public function processRequestData()
@@ -43,8 +48,8 @@ class MessengerRequest extends AbstractBotRequest
             // processes message
             } else {
                 $this->simpleText = trim($message['message']['text']);
-                $this->handler = 'common';
-                $this->action = 'context';
+                $this->handler = $this->conf['textHandler'];
+                $this->action = $this->conf['textAction'];
             }
         }
         return $this;
