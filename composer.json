@@ -1,0 +1,21 @@
+{
+  "name": "benedya/bbot",
+  "description": "Bot framework.",
+  "version":"0.1",
+  "authors": [
+    {
+      "name": "Bohdan Turyk",
+      "email": "benedya@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "pimax/fb-messenger-php": "1.0.*",
+    "php": ">=5.6.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "Bbot": "src/"
+    }
+  }
+}
