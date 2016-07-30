@@ -1,5 +1,6 @@
 ## bot-framework
-
+The goal of this framework is to separate business logic from different platforms of the bot. 
+This framework supports (architecture and main functions) of messenger and telegram platforms for now.
 ## how to use
 ```
 # messenger bot
