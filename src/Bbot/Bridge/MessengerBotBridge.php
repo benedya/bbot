@@ -36,9 +36,10 @@ class MessengerBotBridge implements BotBridgeInterface
         return array_merge($fbUser, ['id' => $this->userId]);
     }
 
-    public function sendText($recipient, $text)
+    public function sendText($text, $recipient = null)
     {
         $this->cliLog('Send text: "' . $text . '"');
+        $recipient = $recipient ? $recipient : $recipient = $this->userId;
         $this->sendBotMsg(new Message($recipient, $text));
     }
 

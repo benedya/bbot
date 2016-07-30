@@ -38,4 +38,12 @@ abstract class AbstractBotService
 
 		return $this;
 	}
+
+	/**
+	 * @return BotBridgeInterface
+	 */
+	public function getBotBridge()
+	{
+		return $this->botBridge;
+	}
 }

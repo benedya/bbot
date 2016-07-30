@@ -20,6 +20,12 @@ class BotApp extends Container
         $this['welcome'] = $this->share(function() {
             return new \Bbot\Handler\WelcomeHandler($this);
         });
+        $this['commands'] = $this->share(function() {
+            return new \Bbot\Handler\CommandsHandler($this);
+        });
+        $this['common'] = $this->share(function() {
+            return new \Bbot\Handler\CommonHandler($this);
+        });
         // service section
         $this['service.welcome'] = $this->share(function() use($botBridge, $botRequest) {
             return new \Bbot\Service\WelcomeService($botBridge, $botRequest);
