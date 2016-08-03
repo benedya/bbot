@@ -2,7 +2,7 @@
 The goal of this framework is to separate business logic from different platforms of the bot. 
 This framework supports (architecture and main functions) of messenger and telegram platforms for now.
 ## how to use
-```
+```php
 # messenger bot
 $data = json_decode(file_get_contents("php://input"), true);
 $message = $data['entry'][0]['messaging'];
@@ -14,7 +14,9 @@ if($botRequest->canHandle()) {
 	$botApp = new BotApp($botBridge, $botRequest);
 	$botApp->handleRequest($botRequest);
 }
+```
 
+```php
 # telegram bot
 // Default handler for commands places in commands `Bbot\Handler\CommandsHandler`
 // Default handler for simple text places in commands `Bbot\Handler\CommonHandler`
