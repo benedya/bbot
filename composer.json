@@ -10,9 +10,9 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "telegram-bot/api": "^2.2",
     "pimax/fb-messenger-php": "1.0.*",
-    "php": ">=5.6.0"
+    "php": ">=5.6.0",
+    "telegram-bot/api": "dev-master"
   },
   "autoload": {
     "psr-0": {

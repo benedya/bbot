@@ -5,6 +5,10 @@ namespace BBot\Bridge;
 interface BotBridgeInterface
 {
     function sendText($text, $recipient = null);
+    function sendKeyboard($text, array $keyboard, $recipient = null);
+    function hideKeyboard($text, $recipient = null);
+    function sendImg($path, $caption = null, $recipient = null);
+    //
     function sendButtons($recipient, array $data);
     function sendListItems($recipient, array $items);
     function buildButtons(array $data);

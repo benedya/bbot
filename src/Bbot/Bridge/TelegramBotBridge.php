@@ -11,6 +11,8 @@ use pimax\Messages\StructuredMessage;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
+use TelegramBot\Api\Types\ReplyKeyboardHide;
+use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
 class TelegramBotBridge implements BotBridgeInterface
 {
@@ -41,6 +43,43 @@ class TelegramBotBridge implements BotBridgeInterface
         $this->cliLog('Send text: "' . $text . '"');
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $this->bot->sendMessage($recipient, $text);
+    }
+
+    public function sendKeyboard($text, array $keyboard, $recipient = null)
+    {
+        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
+        $item = new ReplyKeyboardMarkup($keyboard, true);
+        $this->bot->sendMessage(
+            $recipient,
+            $text,
+            null,
+            false,
+            null,
+            $item
+        );
+    }
+
+    public function hideKeyboard($text, $recipient = null)
+    {
+        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
+        $item = new ReplyKeyboardHide(true);
+        return $this->bot->sendMessage(
+            $recipient,
+            $text,
+            null,
+            false,
+            null,
+            $item
+        );
+    }
+
+    public function sendImg($path, $caption = null, $recipient = null)
+    {
+        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
+        if(!is_file($path)) {
+            throw new \Exception('File "'.$path.'" not found.');
+        }
+        return $this->bot->sendPhoto($recipient, new \CURLFile($path), $caption);
     }
 
     public function sendButtons($recipient, array $data)
