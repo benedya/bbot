@@ -18,22 +18,23 @@ class TelegramBotBridge implements BotBridgeInterface
     protected $sendMsgFromCli;
     protected $chatId;
     protected $messageId;
+    protected $userData;
 
-    function __construct($apiKey, $chatId, $sendMsgFromCli = false)
+    function __construct($apiKey, $chatId, array $userData, $sendMsgFromCli = false)
     {
+        $this->userData = $userData;
         $this->chatId = $chatId;
         $this->bot = new \TelegramBot\Api\BotApi($apiKey);
     }
 
     public function getUserId()
     {
-        return $this->userId;
+        return $this->userData['id'];
     }
 
     public function getUserProfile()
     {
-        $data = [];
-        return array_merge($data, ['id' => $this->userId]);
+        return $this->userData;
     }
 
     public function sendText($text, $recipient = null)

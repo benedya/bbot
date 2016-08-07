@@ -8,6 +8,6 @@ class WelcomeService extends AbstractBotService
 {
     public function showWelcomeMsg(AbstractBotRequest $botRequest)
     {
-        $this->botBridge->sendText(10, 'Say hello!');
+        $this->botBridge->sendText('Say hello!');
     }
 }
