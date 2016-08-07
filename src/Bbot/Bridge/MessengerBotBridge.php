@@ -24,6 +24,24 @@ class MessengerBotBridge implements BotBridgeInterface
         $this->sendMsgFromCli = $sendMsgFromCli;
     }
 
+    public function sendKeyboard($text, array $keyboard, $recipient = null)
+    {
+        $this->cliLog('This is not supported yet.');
+        // todo implement when it will be possible
+    }
+
+    public function hideKeyboard($text, $recipient = null)
+    {
+        $this->cliLog('This is not supported yet.');
+        // todo implement when it will be possible
+    }
+
+    public function sendImg($path, $caption = null, $recipient = null)
+    {
+        $this->cliLog('This is not supported yet.');
+        // todo implement when it will be possible
+    }
+
     public function getUserId()
     {
         return $this->userId;
