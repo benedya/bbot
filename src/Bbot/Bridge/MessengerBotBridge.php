@@ -4,6 +4,7 @@ namespace Bbot\Bridge;
 
 use Bbot\CliLoggerTrait;
 use pimax\FbBotApp;
+use pimax\Messages\ImageMessage;
 use pimax\Messages\Message;
 use pimax\Messages\MessageButton;
 use pimax\Messages\MessageElement;
@@ -38,8 +39,11 @@ class MessengerBotBridge implements BotBridgeInterface
 
     public function sendImg($path, $caption = null, $recipient = null)
     {
-        $this->cliLog('This is not supported yet.');
-        // todo implement when it will be possible
+        $recipient = $recipient ? $recipient : $recipient = $this->userId;
+        $this->sendBotMsg(new ImageMessage($recipient, $recipient));
+        if($caption) {
+            $this->sendText($caption, $recipient);
+        }
     }
 
     public function getUserId()
