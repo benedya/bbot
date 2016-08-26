@@ -70,10 +70,22 @@ class TelegramBotBridge implements BotBridgeInterface
     public function sendImg($path, $caption = null, $recipient = null)
     {
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
+        $tmpFile = false;
+        // create a tmp file in case when given url on a file
         if(!is_file($path)) {
-            throw new \Exception('File "'.$path.'" not found.');
+            if(getimagesize($path)) {
+               $ext = pathinfo($path, PATHINFO_EXTENSION);
+                $tmpFile = sys_get_temp_dir() . '/' . md5($path) . '.' . $ext;
+                file_put_contents($tmpFile, file_get_contents($path));
+                $path = $tmpFile;
+            } else {
+                throw new \Exception('File "'.$path.'" not found.');
+            }
         }
-        return $this->bot->sendPhoto($recipient, new \CURLFile($path), $caption);
+        $this->bot->sendPhoto($recipient, new \CURLFile($path), $caption);
+        if($tmpFile) {
+            unlink($tmpFile);
+        }
     }
 
     public function sendButtons($recipient, array $data)
