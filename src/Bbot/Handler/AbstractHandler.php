@@ -13,5 +13,4 @@ abstract class AbstractHandler
     {
         $this->botApp = $botApp;
     }
-
 }

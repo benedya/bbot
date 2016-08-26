@@ -4,19 +4,23 @@ namespace Bbot;
 
 use Bbot\Bridge\BotBridgeInterface;
 use Bbot\Request\AbstractBotRequest;
+use Psr\Log\LoggerInterface;
 
 class BotApp extends Container
 {
-    use CliLoggerTrait;
     const EVENT_TYPE_PRE_HANDLER = 1;
     const EVENT_TYPE_AFTER_HANDLER = 2;
     const EVENT_SIGNAL_INTERRUPT = 1;
     const EVENT_SIGNAL_LISTEN = 2;
 
     protected $events;
+    /** @var  LoggerInterface */
+    protected $logger;
 
-    function __construct(BotBridgeInterface $botBridge, AbstractBotRequest $botRequest)
+    function __construct(BotBridgeInterface $botBridge, AbstractBotRequest $botRequest, LoggerInterface $logger)
     {
+        $botBridge->setLogger($logger);
+        $this->logger = $logger;
         $this['welcome'] = $this->share(function() {
             return new \Bbot\Handler\WelcomeHandler($this);
         });
@@ -27,8 +31,8 @@ class BotApp extends Container
             return new \Bbot\Handler\CommonHandler($this);
         });
         // service section
-        $this['service.welcome'] = $this->share(function() use($botBridge, $botRequest) {
-            return new \Bbot\Service\WelcomeService($botBridge, $botRequest);
+        $this['service.welcome'] = $this->share(function() use($botBridge, $botRequest, $logger) {
+            return new \Bbot\Service\WelcomeService($botBridge, $botRequest, $logger);
         });
         // register events
         $this
@@ -66,7 +70,7 @@ class BotApp extends Container
 
     public function triggerHandler($handler, $action, AbstractBotRequest $botRequest)
     {
-        $this->cliLog('TRIGGERED to handler "'
+        $this->logger->info('TRIGGERED to handler "'
             . $handler . '" action "'
             . $action . '" request options '
             . print_r($botRequest->getRequestOptions(), true));

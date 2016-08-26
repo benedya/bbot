@@ -2,16 +2,17 @@
 
 namespace Bbot\Bridge;
 
-use Bbot\CliLoggerTrait;
 use pimax\FbBotApp;
 use pimax\Messages\Message;
 use pimax\Messages\MessageButton;
 use pimax\Messages\MessageElement;
 use pimax\Messages\StructuredMessage;
+use Psr\Log\LoggerAwareTrait;
 
 class MessengerBotBridge implements BotBridgeInterface
 {
-    use CliLoggerTrait;
+    use LoggerAwareTrait;
+
     /** @var FbBotApp */
     protected $bot;
     protected $userId;
@@ -26,19 +27,19 @@ class MessengerBotBridge implements BotBridgeInterface
 
     public function sendKeyboard($text, array $keyboard, $recipient = null)
     {
-        $this->cliLog('This is not supported yet.');
+        $this->logger->alert('This is not supported yet.');
         // todo implement when it will be possible
     }
 
     public function hideKeyboard($text, $recipient = null)
     {
-        $this->cliLog('This is not supported yet.');
+        $this->logger->alert('This is not supported yet.');
         // todo implement when it will be possible
     }
 
     public function sendImg($path, $caption = null, $recipient = null)
     {
-        $this->cliLog('This is not supported yet.');
+        $this->logger->alert('This is not supported yet.');
         // todo implement when it will be possible
     }
 
@@ -56,7 +57,7 @@ class MessengerBotBridge implements BotBridgeInterface
 
     public function sendText($text, $recipient = null)
     {
-        $this->cliLog('Send text: "' . $text . '"');
+        $this->logger->info('Send text: "' . $text . '"');
         $recipient = $recipient ? $recipient : $recipient = $this->userId;
         $this->sendBotMsg(new Message($recipient, $text));
     }
@@ -72,7 +73,7 @@ class MessengerBotBridge implements BotBridgeInterface
             $urls[] = $item['url'];
         });
         $buttons = $this->buildButtons($data['buttons']);
-        $this->cliLog('Send ' . $countButtons . ' buttons, caption "' . $data['caption'] . '", urls: ' . join(', ', $urls));
+        $this->logger->info('Send ' . $countButtons . ' buttons, caption "' . $data['caption'] . '", urls: ' . join(', ', $urls));
         $this->sendBotMsg(new StructuredMessage($recipient,
             StructuredMessage::TYPE_BUTTON,
             [
@@ -119,7 +120,7 @@ class MessengerBotBridge implements BotBridgeInterface
     {
         // if script launched via cli no needs to send msg to bot
         if(!$this->sendMsgFromCli and php_sapi_name() == "cli") {
-            $this->cliLog("SKIP SEND MSG BECAUSE SCRIPT LAUNCHED VIA CLI\n");
+            $this->logger->alert("SKIP SEND MSG BECAUSE SCRIPT LAUNCHED VIA CLI\n");
             return;
         }
         $res = $this->bot->send($msg);

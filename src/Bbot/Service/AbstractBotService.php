@@ -4,20 +4,22 @@ namespace Bbot\Service;
 
 use Bbot\Bridge\BotBridgeInterface;
 use Bbot\Request\AbstractBotRequest;
-use Bbot\CliLoggerTrait;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractBotService
 {
-	use CliLoggerTrait;
 	/** @var  BotBridgeInterface */
 	protected $botBridge;
 	/** @var  AbstractBotRequest */
 	protected $botRequest;
+	/** @var  LoggerInterface */
+	protected $logger;
 
-	public function __construct(BotBridgeInterface $botBridge, AbstractBotRequest $botRequest)
+	public function __construct(BotBridgeInterface $botBridge, AbstractBotRequest $botRequest, LoggerInterface $logger)
 	{
 		$this->botBridge = $botBridge;
 		$this->botRequest = $botRequest;
+		$this->logger = $logger;
 	}
 
 	/**

@@ -2,21 +2,14 @@
 
 namespace Bbot\Bridge;
 
-use Bbot\CliLoggerTrait;
-use pimax\FbBotApp;
-use pimax\Messages\Message;
-use pimax\Messages\MessageButton;
-use pimax\Messages\MessageElement;
-use pimax\Messages\StructuredMessage;
-use Longman\TelegramBot\Entities\Update;
-use Longman\TelegramBot\Exception\TelegramException;
-use Longman\TelegramBot\Request;
+use Psr\Log\LoggerAwareTrait;
 use TelegramBot\Api\Types\ReplyKeyboardHide;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
 class TelegramBotBridge implements BotBridgeInterface
 {
-    use CliLoggerTrait;
+    use LoggerAwareTrait;
+
     protected $sendMsgFromCli;
     protected $chatId;
     protected $messageId;
@@ -41,7 +34,7 @@ class TelegramBotBridge implements BotBridgeInterface
 
     public function sendText($text, $recipient = null)
     {
-        $this->cliLog('Send text: "' . $text . '"');
+        $this->logger->info('Send text: "' . $text . '"');
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $this->bot->sendMessage($recipient, $text);
     }
@@ -64,7 +57,7 @@ class TelegramBotBridge implements BotBridgeInterface
     {
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $item = new ReplyKeyboardHide(true);
-        return $this->bot->sendMessage(
+        $this->bot->sendMessage(
             $recipient,
             $text,
             null,
@@ -85,38 +78,25 @@ class TelegramBotBridge implements BotBridgeInterface
 
     public function sendButtons($recipient, array $data)
     {
+        $this->logger->alert('This is not supported yet.');
         // todo implement
     }
 
     public function buildButtons(array $data)
     {
+        $this->logger->alert('This is not supported yet.');
         // todo implement
     }
 
     public function buildItemWithButtons(array $data, array $buttons = [])
     {
+        $this->logger->alert('This is not supported yet.');
         // todo implement
     }
 
     public function sendListItems($recipient, array $items)
     {
+        $this->logger->alert('This is not supported yet.');
         // todo implement
-    }
-
-    protected function sendBotMsg($msg)
-    {
-        // if script launched via cli no needs to send msg to bot
-        if(!$this->sendMsgFromCli and php_sapi_name() == "cli") {
-            $this->cliLog("SKIP SEND MSG BECAUSE SCRIPT LAUNCHED VIA CLI\n");
-            return;
-        }
-        Request::sendChatAction(['chat_id' => $this->chatId, 'action' => 'typing']);
-        $data = [
-            'chat_id'             => $this->chatId,
-            'reply_to_message_id' => $this->messageId,
-        ];
-        $data = array_merge($data, $msg);
-        $result = Request::sendMessage($data);
-        return $result;
     }
 }
