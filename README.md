@@ -1,6 +1,6 @@
 ## bot-framework
 The goal of this framework is to separate business logic from different platforms of a bot. 
-This framework supports (architecture and main functions) of messenger and telegram platforms for now.
+This framework supports messenger and telegram platforms for now.
 ## how to use
 ```php
 # messenger bot
