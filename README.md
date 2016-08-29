@@ -11,7 +11,7 @@ if($botRequest->canHandle()) {
 	$userId = $message['sender']['id'];
 	$pageToken = 'bot_messenger_page_token';
 	$botBridge = new MessengerBotBridge($pageToken, $userId);
-	$botApp = new BotApp($botBridge, $botRequest);
+	$botApp = new BotApp($botBridge, $botRequest, new CliLogger());
 	$botApp->handleRequest($botRequest);
 }
 ```
@@ -25,7 +25,7 @@ $request = new TelegramRequest($data);
 $botRequest = $request->processRequestData();
 if($botRequest->canHandle()) {
 	$botBridge = new TelegramBotBridge($apiKey, $botRequest->getChatData()['id']);
-	$botApp = new BotApp($botBridge, $botRequest);
+	$botApp = new BotApp($botBridge, $botRequest, new CliLogger());
 	$botApp->handleRequest($botRequest);
 }
 ```
