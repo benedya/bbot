@@ -29,4 +29,8 @@ if($botRequest->canHandle()) {
 	$botApp->handleRequest($botRequest);
 }
 ```
+
+## cli debug
+There is opportunity to launch a bot-app under cli. You have to set to `$data` a bot request (telegram or messenger accordingly) and launch app as it shown before. As result you will see all steps handling a request. Also you can add you own debug information.
+
 to be continued...
