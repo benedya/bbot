@@ -3,6 +3,7 @@
 namespace Bbot\Bridge;
 
 use Psr\Log\LoggerAwareTrait;
+use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use TelegramBot\Api\Types\ReplyKeyboardHide;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
@@ -90,25 +91,52 @@ class TelegramBotBridge implements BotBridgeInterface
 
     public function sendButtons($recipient, array $data)
     {
-        $this->logger->alert('This is not supported yet.');
-        // todo implement
+        return $this->bot->sendMessage(
+            $recipient,
+            $data['caption'],
+            null,
+            false,
+            null,
+            $this->buildButtons($data['buttons'])
+        );
     }
 
     public function buildButtons(array $data)
     {
-        $this->logger->alert('This is not supported yet.');
-        // todo implement
+        $data = array_chunk($data, 3);
+        $buttons = [];
+        foreach($data as $line) {
+            $listBtns = [];
+            foreach($line as $btn) {
+                $type = ($btn['type'] == 'postback') ? 'callback_data' : 'url';
+                $listBtns[] = ['text' => $btn['title'], $type => $btn['url']];
+            }
+            $buttons[] = $listBtns;
+        }
+        return new InlineKeyboardMarkup($buttons);
     }
 
     public function buildItemWithButtons(array $data, array $buttons = [])
     {
-        $this->logger->alert('This is not supported yet.');
-        // todo implement
+        // todo implement msg with img
+        return [
+            'text' => "<b>".$data['title']."</b>\r\n".$data['subtitle'],
+            'parseMode' => 'HTML',
+            'buttons' => $this->buildButtons($buttons),
+        ];
     }
 
     public function sendListItems($recipient, array $items)
     {
-        $this->logger->alert('This is not supported yet.');
-        // todo implement
+        foreach($items as $item) {
+            $this->bot->sendMessage(
+                $recipient,
+                $item['text'],
+                isset($item['parseMode']) ? $item['parseMode'] : false,
+                false,
+                null,
+                $item['buttons']
+            );
+        }
     }
 }

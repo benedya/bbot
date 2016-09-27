@@ -4,14 +4,6 @@ namespace Bbot\Request;
 
 class MessengerRequest extends AbstractBotRequest
 {
-    protected $requestData;
-    protected $delimiter = '___';
-    protected $isPostBack;
-    protected $conf = [
-        'textHandler' => 'common',
-        'textAction' => 'index',
-    ];
-
     function __construct(array $data, array $conf = [])
     {
         $this->requestData = $data;
@@ -53,21 +45,6 @@ class MessengerRequest extends AbstractBotRequest
             }
         }
         return $this;
-    }
-
-    protected function setHandlerData($str)
-    {
-        $chunks = explode($this->delimiter, $str);
-        if(count($chunks) < 2) {
-            throw new \Exception('Wrong request data' . print_r($this->requestData, true));
-        }
-        $this->handler = array_shift($chunks);
-        $this->action = array_shift($chunks);
-        if(count($chunks) == 1) {
-            parse_str(array_shift($chunks), $this->requestOptions);
-        } else {
-            $this->requestOptions = $chunks;
-        }
     }
 
     public function isBtnClick()
