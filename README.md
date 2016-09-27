@@ -24,7 +24,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 $request = new TelegramRequest($data);
 $botRequest = $request->processRequestData();
 if($botRequest->canHandle()) {
-	$botBridge = new TelegramBotBridge($apiKey, $botRequest->getChatData()['id']);
+	$botBridge = new TelegramBotBridge($apiKey, $botRequest->getUserId());
 	$botApp = new BotApp($botBridge, $botRequest, new CliLogger());
 	$botApp->handleRequest($botRequest);
 }
