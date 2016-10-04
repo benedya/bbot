@@ -3,6 +3,17 @@ The goal of this framework is to separate business logic from different platform
 This framework supports messenger and telegram platforms for now.
 ## Install
 Via Composer
+1.Modify your `composer.json` and add to section `repositories` my fork of `telegram-bot/api`.
+```php
+"repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/benedya/Api"
+    }
+  ]
+```
+
+2.Then run
 ```php
 $ composer require benedya/bbot
 ```
