@@ -9,6 +9,12 @@
     }
   ],
   "minimum-stability": "dev",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/benedya/Api"
+    }
+  ],
   "require": {
     "psr/log": "^1.0",
     "pimax/fb-messenger-php": "1.0.*",
@@ -19,11 +25,5 @@
     "psr-0": {
       "Bbot": "src/"
     }
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/benedya/Api"
-    }
-  ]
+  }
 }
