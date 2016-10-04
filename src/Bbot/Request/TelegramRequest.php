@@ -22,6 +22,7 @@ class TelegramRequest extends AbstractBotRequest
         } else {
             $isCommand = false;
             $message = $this->requestData['message'];
+            $this->userData = $message['chat'];
             if(isset($message['entities']) and count($message['entities'])) {
                 $entity = array_pop($message['entities']);
                 if(isset($entity['type']) and $entity['type'] === 'bot_command') {

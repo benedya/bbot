@@ -66,8 +66,9 @@ class MessengerBotBridge implements BotBridgeInterface
         $this->sendBotMsg(new Message($recipient, $text));
     }
 
-    public function sendButtons($recipient, array $data)
+    public function sendButtons(array $data, $recipient = null)
     {
+        $recipient = $recipient ? $recipient : $recipient = $this->userId;
         $countButtons = count($data['buttons']);
         if($countButtons < 1 or $countButtons > 3) {
             throw new \Exception('Number of must be from 1 till 3, got ' . $countButtons . ', data ' . print_r($data, true));
@@ -111,8 +112,9 @@ class MessengerBotBridge implements BotBridgeInterface
             $this->buildButtons($buttons));
     }
 
-    public function sendListItems($recipient, array $items)
+    public function sendListItems(array $items, $recipient = null)
     {
+        $recipient = $recipient ? $recipient : $recipient = $this->userId;
         $this->sendBotMsg(new StructuredMessage($recipient,
             StructuredMessage::TYPE_GENERIC, [
                 'elements' => $items

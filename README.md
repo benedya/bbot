@@ -9,29 +9,36 @@ $ composer require benedya/bbot
 ## How to use
 Messenger bot
 ```php
+<?php
+include "./vendor/autoload.php";
 $data = json_decode(file_get_contents("php://input"), true);
-$message = $data['entry'][0]['messaging'];
-$botRequest = (new MessengerRequest($message))->processRequestData();
+$message = $data['entry'][0]['messaging']['0'];
+$botRequest = (new \Bbot\Request\MessengerRequest($message))->processRequestData();
 if($botRequest->canHandle()) {
-	$userId = $message['sender']['id'];
-	$pageToken = 'bot_messenger_page_token';
-	$botBridge = new MessengerBotBridge($pageToken, $userId);
-	$botApp = new BotApp($botBridge, $botRequest, new CliLogger());
-	$botApp->handleRequest($botRequest);
+    $userId = $message['sender']['id'];
+    $pageToken = '';
+    $botBridge = new \Bbot\Bridge\MessengerBotBridge($pageToken, $userId, true);
+    $botApp = new \Bbot\BotApp($botBridge, $botRequest, new \Bbot\CliLogger());
+    $botApp->handleRequest($botRequest);
 }
 ```
 Telegram bot
 ```php
+<?php
+include "./vendor/autoload.php";
+
 // Default handler for commands places in commands `Bbot\Handler\CommandsHandler`
 // Default handler for simple text places in commands `Bbot\Handler\CommonHandler`
 $data = json_decode(file_get_contents("php://input"), true);
-$request = new TelegramRequest($data);
+$apiKey = '';
+$request = new \Bbot\Request\TelegramRequest($data);
 $botRequest = $request->processRequestData();
 if($botRequest->canHandle()) {
-	$botBridge = new TelegramBotBridge($apiKey, $botRequest->getUserId());
-	$botApp = new BotApp($botBridge, $botRequest, new CliLogger());
-	$botApp->handleRequest($botRequest);
+    $botBridge = new \Bbot\Bridge\TelegramBotBridge($apiKey, $botRequest->getUserData());
+    $botApp = new \Bbot\BotApp($botBridge, $botRequest, new \Bbot\CliLogger());
+    $botApp->handleRequest($botRequest);
 }
+
 ```
 
 ## Cli debug

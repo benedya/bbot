@@ -89,8 +89,9 @@ class TelegramBotBridge implements BotBridgeInterface
         }
     }
 
-    public function sendButtons($recipient, array $data)
+    public function sendButtons(array $data, $recipient = null)
     {
+        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         return $this->bot->sendMessage(
             $recipient,
             $data['caption'],
@@ -126,8 +127,9 @@ class TelegramBotBridge implements BotBridgeInterface
         ];
     }
 
-    public function sendListItems($recipient, array $items)
+    public function sendListItems(array $items, $recipient = null)
     {
+        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         foreach($items as $item) {
             $this->bot->sendMessage(
                 $recipient,
