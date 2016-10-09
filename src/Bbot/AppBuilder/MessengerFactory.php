@@ -32,7 +32,7 @@ class MessengerFactory extends AbstractFactory
         return new \Bbot\Bridge\MessengerBotBridge(
             $this->pageToken,
             $botRequest->getUserData()['id'],
-            true
+            $this->sendMsgFromCli
         );
     }
 }

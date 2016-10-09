@@ -6,6 +6,8 @@ use Bbot\Request\AbstractBotRequest;
 
 abstract class AbstractFactory
 {
+    protected $sendMsgFromCli = false;
+
     /**
      * @param array $data
      * @return \Bbot\Request\AbstractBotRequest
@@ -31,6 +33,16 @@ abstract class AbstractFactory
             return $botApp;
         }
         return false;
+    }
+
+    /**
+     * Allows sending a message when app launched via cli.
+     * @return $this
+     */
+    public function allowSendMsgFromCli()
+    {
+        $this->sendMsgFromCli = true;
+        return $this;
     }
 
     /**

@@ -27,6 +27,10 @@ class TelegramFactory extends AbstractFactory
      */
     public function getBridge(AbstractBotRequest $botRequest)
     {
-        return new \Bbot\Bridge\TelegramBotBridge($this->apiKey, $botRequest->getUserData());
+        return new \Bbot\Bridge\TelegramBotBridge(
+            $this->apiKey,
+            $botRequest->getUserData(),
+            $this->sendMsgFromCli
+        );
     }
 }
