@@ -13,6 +13,7 @@ class MessengerRequest extends AbstractBotRequest
 
     public function processRequestData()
     {
+        $this->userData = $this->requestData['sender'];
         // checks postback
         if(isset($this->requestData['postback'])) {
             $this->simpleText = $this->requestData['postback']['payload'];
