@@ -1,6 +1,6 @@
 {
   "name": "benedya/bbot",
-  "description": "Bot framework.",
+  "description": "Bot framework. One server-side for different platforms.",
   "keywords": [
     "php",
     "telegram",
