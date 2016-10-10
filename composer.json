@@ -1,7 +1,14 @@
 {
   "name": "benedya/bbot",
   "description": "Bot framework.",
-  "version":"0.1",
+  "keywords": [
+    "php",
+    "telegram",
+    "messenger",
+    "bot",
+    "bot framework"
+  ],
+  "version":"0.9",
   "authors": [
     {
       "name": "Bohdan Turyk",
