@@ -29,10 +29,12 @@ class MessengerFactory extends AbstractFactory
      */
     public function getBridge(AbstractBotRequest $botRequest)
     {
-        return new \Bbot\Bridge\MessengerBotBridge(
+        $bridge = new \Bbot\Bridge\MessengerBotBridge(
             $this->pageToken,
             $botRequest->getUserData()['id'],
             $this->sendMsgFromCli
         );
+        $bridge->setLogger($this->getLogger());
+        return $bridge;
     }
 }
