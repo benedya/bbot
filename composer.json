@@ -8,7 +8,6 @@
     "bot",
     "bot framework"
   ],
-  "version":"0.9",
   "authors": [
     {
       "name": "Bohdan Turyk",
@@ -16,12 +15,6 @@
     }
   ],
   "minimum-stability": "dev",
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/benedya/Api"
-    }
-  ],
   "require": {
     "psr/log": "^1.0",
     "pimax/fb-messenger-php": "1.0.*",
