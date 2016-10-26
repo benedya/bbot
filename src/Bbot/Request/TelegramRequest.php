@@ -33,6 +33,7 @@ class TelegramRequest extends AbstractBotRequest
                 $this->handler = 'commands';
                 $this->action = preg_replace("/^\//", "", $message['text']);
             } else {
+                $this->isTextMsg = true;
                 $this->simpleText = trim($message['text']);
                 $this->handler = $this->conf['textHandler'];
                 $this->action = $this->conf['textAction'];

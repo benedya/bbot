@@ -40,8 +40,8 @@ class MessengerBotBridge implements BotBridgeInterface
 
     public function sendImg($path, $caption = null, $recipient = null)
     {
-        $recipient = $recipient ? $recipient : $recipient = $this->userId;
-        $this->sendBotMsg(new ImageMessage($recipient, $recipient));
+        $recipient = $recipient ? $recipient : $this->userId;
+        $this->sendBotMsg(new ImageMessage($recipient, $path));
         if($caption) {
             $this->sendText($caption, $recipient);
         }
@@ -62,13 +62,13 @@ class MessengerBotBridge implements BotBridgeInterface
     public function sendText($text, $recipient = null)
     {
         $this->logger->info('Send text: "' . $text . '"');
-        $recipient = $recipient ? $recipient : $recipient = $this->userId;
+        $recipient = $recipient ? $recipient : $this->userId;
         $this->sendBotMsg(new Message($recipient, $text));
     }
 
     public function sendButtons(array $data, $recipient = null)
     {
-        $recipient = $recipient ? $recipient : $recipient = $this->userId;
+        $recipient = $recipient ? $recipient : $this->userId;
         $countButtons = count($data['buttons']);
         if($countButtons < 1 or $countButtons > 3) {
             throw new \Exception('Number of must be from 1 till 3, got ' . $countButtons . ', data ' . print_r($data, true));
@@ -114,7 +114,7 @@ class MessengerBotBridge implements BotBridgeInterface
 
     public function sendListItems(array $items, $recipient = null)
     {
-        $recipient = $recipient ? $recipient : $recipient = $this->userId;
+        $recipient = $recipient ? $recipient : $this->userId;
         $this->sendBotMsg(new StructuredMessage($recipient,
             StructuredMessage::TYPE_GENERIC, [
                 'elements' => $items
