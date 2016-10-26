@@ -182,7 +182,6 @@ class TelegramBotBridge implements BotBridgeInterface
                     'caption' => $item['simpleText'],
                     'buttons' => $item['buttons'],
                 ]);
-                $this->sendButtons($item['buttons']);
             } else {
                 $this->bot->sendMessage(
                     $recipient,
