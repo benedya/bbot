@@ -85,10 +85,18 @@ class TelegramBotBridge implements BotBridgeInterface
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $tmpFile = false;
-        // create a tmp file in case when given url on a file
+        // checks if there isset a local file using server variable
+        if(!is_file($path) and isset($_SERVER['DOCUMENT_ROOT']) and $_SERVER['DOCUMENT_ROOT']) {
+            $arr = parse_url($path);
+            $serverPath = $_SERVER['DOCUMENT_ROOT'] . $arr['path'];
+            if(is_file($serverPath)) {
+                $path = $serverPath;
+            }
+        }
+        // if there is no file - download it and create a tmp file
         if(!is_file($path)) {
             if(getimagesize($path)) {
-               $ext = pathinfo($path, PATHINFO_EXTENSION);
+                $ext = pathinfo($path, PATHINFO_EXTENSION);
                 $tmpFile = sys_get_temp_dir() . '/' . md5($path) . '.' . $ext;
                 file_put_contents($tmpFile, file_get_contents($path));
                 $path = $tmpFile;
@@ -153,6 +161,7 @@ class TelegramBotBridge implements BotBridgeInterface
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         foreach($items as $item) {
             if($item['image']) {
+                echo "\n send image " . $item['image'];
                 $this->sendImg($item['image'], $item['simpleText']);
             } else {
                 $this->bot->sendMessage(
