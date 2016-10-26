@@ -104,7 +104,24 @@ class TelegramBotBridge implements BotBridgeInterface
                 throw new \Exception('File "'.$path.'" not found.');
             }
         }
-        $this->bot->sendPhoto($recipient, new \CURLFile($path), $caption);
+        $buttons = [];
+        // checks if there are buttons
+        if(is_array($caption)) {
+            $data = $caption;
+            $caption = $data['caption'];
+            $buttons = $data['buttons'];
+            // if buttons were not built yet - build it now
+            if(is_array($buttons)) {
+                $buttons = $this->buildButtons($buttons);
+            }
+        }
+        $this->bot->sendPhoto(
+            $recipient,
+            new \CURLFile($path),
+            $caption,
+            null,
+            $buttons
+        );
         if($tmpFile) {
             unlink($tmpFile);
         }
@@ -161,8 +178,11 @@ class TelegramBotBridge implements BotBridgeInterface
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         foreach($items as $item) {
             if($item['image']) {
-                echo "\n send image " . $item['image'];
-                $this->sendImg($item['image'], $item['simpleText']);
+                $this->sendImg($item['image'], [
+                    'caption' => $item['simpleText'],
+                    'buttons' => $item['buttons'],
+                ]);
+                $this->sendButtons($item['buttons']);
             } else {
                 $this->bot->sendMessage(
                     $recipient,
