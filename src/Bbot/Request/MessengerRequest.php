@@ -33,10 +33,11 @@ class MessengerRequest extends AbstractBotRequest
             if(isset($message['message']['attachments'])) {
                 $attachment = array_pop($message['message']['attachments']);
                 if(isset($attachment['payload']['coordinates'])) {
+                    $this->requestOptions = $attachment['payload']['coordinates'];
+                    $this->set('lat', $this->requestOptions['lat']);
+                    $this->set('lng', $this->requestOptions['long']);
                     $this->handler = 'location';
                     $this->action = 'setlocation';
-                    $this->requestOptions = $attachment['payload']['coordinates'];
-                    $this->simpleText = $this->handler;
                 }
             // processes message
             } else {

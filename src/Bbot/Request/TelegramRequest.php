@@ -32,6 +32,12 @@ class TelegramRequest extends AbstractBotRequest
             if($isCommand) {
                 $this->handler = 'commands';
                 $this->action = preg_replace("/^\//", "", $message['text']);
+            } elseif(isset($message['location'])) {
+                $this->requestOptions = $message['location'];
+                $this->set('lat', $message['location']['latitude']);
+                $this->set('lng', $message['location']['longitude']);
+                $this->handler = 'location';
+                $this->action = 'setlocation';
             } else {
                 $this->isTextMsg = true;
                 $this->simpleText = trim($message['text']);
