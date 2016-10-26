@@ -138,6 +138,8 @@ class TelegramBotBridge implements BotBridgeInterface
         // todo implement msg with img
         return [
             'text' => "<b>".$data['title']."</b>\r\n".$data['subtitle'],
+            'simpleText' => $data['title']."\r\n".$data['subtitle'],
+            'image' => (isset($data['image']) ? $data['image'] : null),
             'parseMode' => 'HTML',
             'buttons' => $this->buildButtons($buttons),
         ];
@@ -150,14 +152,18 @@ class TelegramBotBridge implements BotBridgeInterface
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         foreach($items as $item) {
-            $this->bot->sendMessage(
-                $recipient,
-                $item['text'],
-                isset($item['parseMode']) ? $item['parseMode'] : false,
-                false,
-                null,
-                $item['buttons']
-            );
+            if($item['image']) {
+                $this->sendImg($item['image'], $item['simpleText']);
+            } else {
+                $this->bot->sendMessage(
+                    $recipient,
+                    $item['text'],
+                    isset($item['parseMode']) ? $item['parseMode'] : false,
+                    false,
+                    null,
+                    $item['buttons']
+                );
+            }
         }
     }
 
