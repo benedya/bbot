@@ -2,12 +2,10 @@
 
 namespace Bbot\Service;
 
-use Bbot\Request\AbstractBotRequest;
-
 class WelcomeService extends AbstractBotService
 {
-    public function showWelcomeMsg(AbstractBotRequest $botRequest)
+    public function showWelcomeMsg()
     {
-        $this->botBridge->sendText('Say hello!');
+        $this->botBridge->sendText('Hello!');
     }
 }
