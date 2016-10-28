@@ -38,7 +38,11 @@ $data = json_decode(file_get_contents("php://input"), true);
 $apiKey = '';
 $botApp = (new \Bbot\AppBuilder\TelegramFactory($apiKey))->handle($data);
 ```
-
+Fast example (it is valid for all supported bot-platforms)
+```php
+$botBridge = $botApp->getWelcomeService()->getBotBridge();
+$botBridge->sendText("Hi! I'm bot ;)");
+```
 ## Cli debug
 There is opportunity to launch a bot-app under cli. You have to set to `$data` a bot request (telegram or messenger accordingly) and launch app as it shown before. As result you will see all steps handling a request. Also you can add you own debug information.
 
