@@ -142,6 +142,16 @@ abstract class AbstractBotRequest
         return $this->userData;
     }
 
+    /**
+     * @param mixed $isTextMsg
+     * @return AbstractBotRequest
+     */
+    public function setIsTextMsg($isTextMsg)
+    {
+        $this->isTextMsg = $isTextMsg;
+        return $this;
+    }
+
     protected function setHandlerData($str)
     {
         $chunks = explode($this->delimiter, $str);
