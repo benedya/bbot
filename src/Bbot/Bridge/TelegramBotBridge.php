@@ -38,7 +38,7 @@ class TelegramBotBridge implements BotBridgeInterface
     {
         $this->logger->info('Send text: "' . $text . '"');
         if(!$this->canSend()) {
-            return true;
+            return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $this->bot->sendMessage($recipient, $text);
@@ -47,7 +47,7 @@ class TelegramBotBridge implements BotBridgeInterface
     public function sendKeyboard($text, array $keyboard, $recipient = null)
     {
         if(!$this->canSend()) {
-            return true;
+            return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $item = new ReplyKeyboardMarkup($keyboard, true);
@@ -64,7 +64,7 @@ class TelegramBotBridge implements BotBridgeInterface
     public function hideKeyboard($text, $recipient = null)
     {
         if(!$this->canSend()) {
-            return true;
+            return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $item = new ReplyKeyboardHide(true);
@@ -81,7 +81,7 @@ class TelegramBotBridge implements BotBridgeInterface
     public function sendImg($path, $caption = null, $recipient = null)
     {
         if(!$this->canSend()) {
-            return true;
+            return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $tmpFile = false;
@@ -130,7 +130,7 @@ class TelegramBotBridge implements BotBridgeInterface
     public function sendButtons(array $data, $recipient = null)
     {
         if(!$this->canSend()) {
-            return true;
+            return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         return $this->bot->sendMessage(
@@ -173,7 +173,7 @@ class TelegramBotBridge implements BotBridgeInterface
     public function sendListItems(array $items, $recipient = null)
     {
         if(!$this->canSend()) {
-            return true;
+            return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         foreach($items as $item) {
