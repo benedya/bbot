@@ -25,5 +25,11 @@
     "psr-0": {
       "Bbot": "src/"
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/benedya/Api"
+    }
+  ]
 }
