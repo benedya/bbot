@@ -19,7 +19,7 @@
     "psr/log": "^1.0",
     "pimax/fb-messenger-php": "1.0.*",
     "php": ">=5.5.0",
-    "telegram-bot/api": "dev-inlinekeyboard"
+    "telegram-bot/api": "v2.3.1"
   },
   "autoload": {
     "psr-0": {
