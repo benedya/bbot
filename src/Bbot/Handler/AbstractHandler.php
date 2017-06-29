@@ -2,7 +2,7 @@
 
 namespace Bbot\Handler;
 
-use BBot\BotApp;
+use Bbot\BotApp;
 
 abstract class AbstractHandler
 {

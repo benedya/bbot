@@ -1,6 +1,6 @@
 <?php
 
-namespace BBot\Bridge;
+namespace Bbot\Bridge;
 
 use Psr\Log\LoggerInterface;
 
