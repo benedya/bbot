@@ -4,6 +4,7 @@ namespace Bbot\Request;
 
 class MessengerRequest extends AbstractBotRequest
 {
+    protected $isProcessedData = false;
     function __construct(array $data, array $conf = [])
     {
         $this->requestData = $data;
@@ -13,6 +14,9 @@ class MessengerRequest extends AbstractBotRequest
 
     public function processRequestData()
     {
+        if ($this->isProcessedData) {
+            return $this;
+        }
         $this->userData = $this->requestData['sender'];
         // checks postback
         if(isset($this->requestData['postback'])) {
@@ -46,6 +50,8 @@ class MessengerRequest extends AbstractBotRequest
                 $this->action = $this->conf['textAction'];
             }
         }
+        $this->isProcessedData = true;
+
         return $this;
     }
 
