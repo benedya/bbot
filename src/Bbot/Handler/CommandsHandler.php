@@ -2,7 +2,6 @@
 
 namespace Bbot\Handler;
 
-use Bbot\Handler\AbstractHandler;
 use Bbot\Request\AbstractBotRequest;
 
 class CommandsHandler extends AbstractHandler

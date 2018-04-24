@@ -2,7 +2,6 @@
 
 namespace Bbot\Bridge;
 
-use DoctrineExtensions\Query\Mysql\Log;
 use Psr\Log\LoggerInterface;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use TelegramBot\Api\Types\ReplyKeyboardHide;
@@ -16,10 +15,10 @@ class TelegramBotBridge implements BotBridgeInterface
     protected $userData;
     /** @var LoggerInterface */
     protected $logger;
-    /** @var \TelegramBot\Api\BotApi  */
+    /** @var \TelegramBot\Api\BotApi */
     protected $bot;
 
-    function __construct($apiKey, array $userData, LoggerInterface $logger, $sendMsgFromCli = false)
+    public function __construct($apiKey, array $userData, LoggerInterface $logger, $sendMsgFromCli = false)
     {
         $this->userData = $userData;
         $this->logger = $logger;
@@ -40,8 +39,8 @@ class TelegramBotBridge implements BotBridgeInterface
 
     public function sendText($text, $recipient = null)
     {
-        $this->logger->info('Send text: "' . $text . '"');
-        if(!$this->canSend()) {
+        $this->logger->info('Send text: "'.$text.'"');
+        if (!$this->canSend()) {
             return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
@@ -50,7 +49,7 @@ class TelegramBotBridge implements BotBridgeInterface
 
     public function sendKeyboard($text, array $keyboard, $recipient = null)
     {
-        if(!$this->canSend()) {
+        if (!$this->canSend()) {
             return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
@@ -67,7 +66,7 @@ class TelegramBotBridge implements BotBridgeInterface
 
     public function hideKeyboard($text, $recipient = null)
     {
-        if(!$this->canSend()) {
+        if (!$this->canSend()) {
             return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
@@ -84,24 +83,24 @@ class TelegramBotBridge implements BotBridgeInterface
 
     public function sendImg($path, $caption = null, $recipient = null)
     {
-        if(!$this->canSend()) {
+        if (!$this->canSend()) {
             return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $tmpFile = false;
         // checks if there isset a local file using server variable
-        if(!is_file($path) and isset($_SERVER['DOCUMENT_ROOT']) and $_SERVER['DOCUMENT_ROOT']) {
+        if (!is_file($path) and isset($_SERVER['DOCUMENT_ROOT']) and $_SERVER['DOCUMENT_ROOT']) {
             $arr = parse_url($path);
-            $serverPath = $_SERVER['DOCUMENT_ROOT'] . $arr['path'];
-            if(is_file($serverPath)) {
+            $serverPath = $_SERVER['DOCUMENT_ROOT'].$arr['path'];
+            if (is_file($serverPath)) {
                 $path = $serverPath;
             }
         }
         // if there is no file - download it and create a tmp file
-        if(!is_file($path)) {
-            if(getimagesize($path)) {
+        if (!is_file($path)) {
+            if (getimagesize($path)) {
                 $ext = pathinfo($path, PATHINFO_EXTENSION);
-                $tmpFile = sys_get_temp_dir() . '/' . md5($path) . '.' . $ext;
+                $tmpFile = sys_get_temp_dir().'/'.md5($path).'.'.$ext;
                 file_put_contents($tmpFile, file_get_contents($path));
                 $path = $tmpFile;
             } else {
@@ -110,12 +109,12 @@ class TelegramBotBridge implements BotBridgeInterface
         }
         $buttons = [];
         // checks if there are buttons
-        if(is_array($caption)) {
+        if (is_array($caption)) {
             $data = $caption;
             $caption = $data['caption'];
             $buttons = $data['buttons'];
             // if buttons were not built yet - build it now
-            if(is_array($buttons)) {
+            if (is_array($buttons)) {
                 $buttons = $this->buildButtons($buttons);
             }
         }
@@ -126,14 +125,14 @@ class TelegramBotBridge implements BotBridgeInterface
             null,
             $buttons
         );
-        if($tmpFile) {
+        if ($tmpFile) {
             unlink($tmpFile);
         }
     }
 
     public function sendButtons(array $data, $recipient = null)
     {
-        if(!$this->canSend()) {
+        if (!$this->canSend()) {
             return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
@@ -151,10 +150,10 @@ class TelegramBotBridge implements BotBridgeInterface
     {
         $data = array_chunk($data, 3);
         $buttons = [];
-        foreach($data as $line) {
+        foreach ($data as $line) {
             $listBtns = [];
-            foreach($line as $btn) {
-                $type = ($btn['type'] == 'postback') ? 'callback_data' : 'url';
+            foreach ($line as $btn) {
+                $type = ('postback' === $btn['type']) ? 'callback_data' : 'url';
                 $listBtns[] = ['text' => $btn['title'], $type => $btn['url']];
             }
             $buttons[] = $listBtns;
@@ -166,7 +165,7 @@ class TelegramBotBridge implements BotBridgeInterface
     {
         // todo implement msg with img
         return [
-            'text' => "<b>".$data['title']."</b>\r\n".$data['subtitle'],
+            'text' => '<b>'.$data['title']."</b>\r\n".$data['subtitle'],
             'simpleText' => $data['title']."\r\n".$data['subtitle'],
             'image' => (isset($data['image']) ? $data['image'] : null),
             'parseMode' => 'HTML',
@@ -176,12 +175,12 @@ class TelegramBotBridge implements BotBridgeInterface
 
     public function sendListItems(array $items, $recipient = null)
     {
-        if(!$this->canSend()) {
+        if (!$this->canSend()) {
             return;
         }
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
-        foreach($items as $item) {
-            if($item['image']) {
+        foreach ($items as $item) {
+            if ($item['image']) {
                 $this->sendImg($item['image'], [
                     'caption' => $item['simpleText'],
                     'buttons' => $item['buttons'],
@@ -204,7 +203,7 @@ class TelegramBotBridge implements BotBridgeInterface
      */
     protected function canSend()
     {
-        if(!$this->sendMsgFromCli and php_sapi_name() == "cli") {
+        if (!$this->sendMsgFromCli and 'cli' === php_sapi_name()) {
             $this->logger->alert("SKIP SEND MSG BECAUSE SCRIPT LAUNCHED VIA CLI\n");
             return false;
         }

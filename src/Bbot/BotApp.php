@@ -14,30 +14,29 @@ class BotApp extends Container
     const EVENT_SIGNAL_LISTEN = 2;
 
     protected $events;
-    /** @var  LoggerInterface */
+    /** @var LoggerInterface */
     protected $logger;
 
-    function __construct(BotBridgeInterface $botBridge, AbstractBotRequest $botRequest, LoggerInterface $logger)
+    public function __construct(BotBridgeInterface $botBridge, AbstractBotRequest $botRequest, LoggerInterface $logger)
     {
         $botBridge->setLogger($logger);
         $this->logger = $logger;
-        $this['welcome'] = $this->share(function() {
+        $this['welcome'] = $this->share(function () {
             return new \Bbot\Handler\WelcomeHandler($this);
         });
-        $this['commands'] = $this->share(function() {
+        $this['commands'] = $this->share(function () {
             return new \Bbot\Handler\CommandsHandler($this);
         });
-        $this['common'] = $this->share(function() {
+        $this['common'] = $this->share(function () {
             return new \Bbot\Handler\CommonHandler($this);
         });
         // service section
-        $this['service.welcome'] = $this->share(function() use($botBridge, $botRequest, $logger) {
+        $this['service.welcome'] = $this->share(function () use ($botBridge, $botRequest, $logger) {
             return new \Bbot\Service\WelcomeService($botBridge, $botRequest, $logger);
         });
         // register events
         $this
-            ->addEvent(function() {
-
+            ->addEvent(function () {
             }, self::EVENT_TYPE_PRE_HANDLER);
     }
 
@@ -52,16 +51,16 @@ class BotApp extends Container
     public function handleRequest(AbstractBotRequest $botRequest)
     {
         $handlerName = $botRequest->getHandler();
-        if(!$this->offsetExists($handlerName)) {
-            throw new \Exception('Handler "'. $handlerName .'" not found');
+        if (!$this->offsetExists($handlerName)) {
+            throw new \Exception('Handler "'.$handlerName.'" not found');
         }
         $handler = $this[$handlerName];
-        $method = $botRequest->getAction() . 'Action';
-        if(!method_exists($handler, $method)) {
-            throw new \Exception('Method "'.$method.'" does not exists in class "'. get_class($handler) .'"');
+        $method = $botRequest->getAction().'Action';
+        if (!method_exists($handler, $method)) {
+            throw new \Exception('Method "'.$method.'" does not exists in class "'.get_class($handler).'"');
         }
         $signal = $this->dispatchEvent(self::EVENT_TYPE_PRE_HANDLER);
-        if($signal !== self::EVENT_SIGNAL_INTERRUPT) {
+        if (self::EVENT_SIGNAL_INTERRUPT !== $signal) {
             $result = $handler->{$method}($botRequest);
             $this->dispatchEvent(self::EVENT_TYPE_AFTER_HANDLER);
             return $result;
@@ -71,16 +70,16 @@ class BotApp extends Container
     public function triggerHandler($handler, $action, AbstractBotRequest $botRequest)
     {
         $this->logger->info('TRIGGERED to handler "'
-            . $handler . '" action "'
-            . $action . '" request options '
-            . print_r($botRequest->getRequestOptions(), true));
+            .$handler.'" action "'
+            .$action.'" request options '
+            .print_r($botRequest->getRequestOptions(), true));
         $botRequest->setHandler($handler)->setAction($action)->setIsTriggered(true);
         return $this->handleRequest($botRequest);
     }
 
     protected function addEvent(\Closure $closure, $type)
     {
-        if(!isset($this->events[$type])) {
+        if (!isset($this->events[$type])) {
             $this->events[$type] = [];
         }
         $this->events[$type][] = $closure;
@@ -89,10 +88,10 @@ class BotApp extends Container
 
     protected function dispatchEvent($type)
     {
-        if(isset($this->events[$type])) {
-            foreach($this->events[$type] as $event) {
+        if (isset($this->events[$type])) {
+            foreach ($this->events[$type] as $event) {
                 $signal = $event();
-                if($signal === self::EVENT_SIGNAL_INTERRUPT) {
+                if (self::EVENT_SIGNAL_INTERRUPT === $signal) {
                     return self::EVENT_SIGNAL_INTERRUPT;
                 }
             }

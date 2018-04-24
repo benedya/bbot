@@ -2,7 +2,6 @@
 
 namespace Bbot;
 
-
 class Container implements \ArrayAccess
 {
     protected $values = array();
@@ -49,12 +48,13 @@ class Container implements \ArrayAccess
      *
      * @param string $id The unique identifier for the parameter or object
      *
-     * @return Boolean
+     * @return bool
      */
     public function offsetExists($id)
     {
         return array_key_exists($id, $this->values);
     }
+
     /**
      * Unsets a parameter or an object.
      *

@@ -2,14 +2,13 @@
 
 namespace Bbot\AppBuilder;
 
-use Bbot\Bridge\MessengerBotBridge;
 use Bbot\Request\AbstractBotRequest;
 
 class MessengerFactory extends AbstractFactory
 {
     protected $pageToken;
 
-    function __construct($pageToken)
+    public function __construct($pageToken)
     {
         $this->pageToken = $pageToken;
     }

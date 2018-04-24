@@ -2,14 +2,13 @@
 
 namespace Bbot\AppBuilder;
 
-use Bbot\Bridge\MessengerBotBridge;
 use Bbot\Request\AbstractBotRequest;
 
 class TelegramFactory extends AbstractFactory
 {
     protected $apiKey;
 
-    function __construct($apiKey)
+    public function __construct($apiKey)
     {
         $this->apiKey = $apiKey;
     }

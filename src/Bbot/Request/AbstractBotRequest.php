@@ -31,7 +31,7 @@ abstract class AbstractBotRequest
 
     public function canHandle()
     {
-        if($this->action and $this->handler) {
+        if ($this->action and $this->handler) {
             return true;
         }
         return false;
@@ -47,7 +47,6 @@ abstract class AbstractBotRequest
 
     /**
      * @param $name
-     * @return null
      */
     public function get($name)
     {
@@ -70,6 +69,7 @@ abstract class AbstractBotRequest
 
     /**
      * @param $action
+     *
      * @return $this
      */
     public function setAction($action)
@@ -80,6 +80,7 @@ abstract class AbstractBotRequest
 
     /**
      * @param $handler
+     *
      * @return $this
      */
     public function setHandler($handler)
@@ -90,6 +91,7 @@ abstract class AbstractBotRequest
 
     /**
      * @param $requestOptions
+     *
      * @return $this
      */
     public function setRequestOptions($requestOptions)
@@ -100,6 +102,7 @@ abstract class AbstractBotRequest
 
     /**
      * @param mixed $isTriggered
+     *
      * @return AbstractBotRequest
      */
     public function setIsTriggered($isTriggered)
@@ -118,6 +121,7 @@ abstract class AbstractBotRequest
 
     /**
      * @param mixed $simpleText
+     *
      * @return AbstractBotRequest
      */
     public function setSimpleText($simpleText)
@@ -144,6 +148,7 @@ abstract class AbstractBotRequest
 
     /**
      * @param mixed $isTextMsg
+     *
      * @return AbstractBotRequest
      */
     public function setIsTextMsg($isTextMsg)
@@ -155,18 +160,19 @@ abstract class AbstractBotRequest
     protected function setHandlerData($str)
     {
         $chunks = explode($this->delimiter, $str);
-        if(count($chunks) < 2) {
-            throw new \Exception('Wrong request data' . print_r($this->requestData, true));
+        if (count($chunks) < 2) {
+            throw new \Exception('Wrong request data'.print_r($this->requestData, true));
         }
         $this->handler = array_shift($chunks);
         $this->action = array_shift($chunks);
-        if(count($chunks) == 1) {
+        if (1 === count($chunks)) {
             parse_str(array_shift($chunks), $this->requestOptions);
         } else {
             $this->requestOptions = $chunks;
         }
     }
 
-    public abstract function isBtnClick();
-    public abstract function processRequestData();
+    abstract public function isBtnClick();
+
+    abstract public function processRequestData();
 }

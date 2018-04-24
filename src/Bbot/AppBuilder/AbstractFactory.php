@@ -10,23 +10,26 @@ abstract class AbstractFactory
 
     /**
      * @param array $data
+     *
      * @return \Bbot\Request\AbstractBotRequest
      */
-    abstract function getRequest(array $data);
+    abstract public function getRequest(array $data);
+
     /**
      * @return \Bbot\Bridge\BotBridgeInterface
      */
-    abstract function getBridge(AbstractBotRequest $botRequest);
+    abstract public function getBridge(AbstractBotRequest $botRequest);
 
     /**
      * @param array $requestData
+     *
      * @return \Bbot\BotApp|bool
      */
     public function handle(array $requestData)
     {
         $botRequest = $this->getRequest($requestData);
         $botRequest->processRequestData();
-        if($botRequest->canHandle()) {
+        if ($botRequest->canHandle()) {
             $botBridge = $this->getBridge($botRequest);
             $botApp = new \Bbot\BotApp($botBridge, $botRequest, $this->getLogger());
             $botApp->handleRequest($botRequest);
@@ -37,6 +40,7 @@ abstract class AbstractFactory
 
     /**
      * Allows sending a message when app launched via cli.
+     *
      * @return $this
      */
     public function allowSendMsgFromCli()

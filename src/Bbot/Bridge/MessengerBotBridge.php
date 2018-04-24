@@ -16,10 +16,10 @@ class MessengerBotBridge implements BotBridgeInterface
     protected $bot;
     protected $userId;
     protected $sendMsgFromCli;
-    /** @var LoggerInterface  */
+    /** @var LoggerInterface */
     protected $logger;
 
-    function __construct($pageToken, $userId, LoggerInterface $logger, $sendMsgFromCli = false)
+    public function __construct($pageToken, $userId, LoggerInterface $logger, $sendMsgFromCli = false)
     {
         $this->bot = new FbBotApp($pageToken);
         $this->userId = $userId;
@@ -43,7 +43,7 @@ class MessengerBotBridge implements BotBridgeInterface
     {
         $recipient = $recipient ? $recipient : $this->userId;
         $this->sendBotMsg(new ImageMessage($recipient, $path));
-        if($caption) {
+        if ($caption) {
             $this->sendText($caption, $recipient);
         }
     }
@@ -55,14 +55,14 @@ class MessengerBotBridge implements BotBridgeInterface
 
     public function getUserProfile()
     {
-        $fbUser = (array)$this->bot->userProfile($this->userId);
+        $fbUser = (array) $this->bot->userProfile($this->userId);
         $fbUser = array_pop($fbUser);
         return array_merge($fbUser, ['id' => $this->userId]);
     }
 
     public function sendText($text, $recipient = null)
     {
-        $this->logger->info('Send text: "' . $text . '"');
+        $this->logger->info('Send text: "'.$text.'"');
         $recipient = $recipient ? $recipient : $this->userId;
         $this->sendBotMsg(new Message($recipient, $text));
     }
@@ -71,20 +71,20 @@ class MessengerBotBridge implements BotBridgeInterface
     {
         $recipient = $recipient ? $recipient : $this->userId;
         $countButtons = count($data['buttons']);
-        if($countButtons < 1 or $countButtons > 3) {
-            throw new \Exception('Number of must be from 1 till 3, got ' . $countButtons . ', data ' . print_r($data, true));
+        if ($countButtons < 1 or $countButtons > 3) {
+            throw new \Exception('Number of must be from 1 till 3, got '.$countButtons.', data '.print_r($data, true));
         }
         $urls = [];
-        array_walk($data['buttons'], function($item) use(&$urls) {
+        array_walk($data['buttons'], function ($item) use (&$urls) {
             $urls[] = $item['url'];
         });
         $buttons = $this->buildButtons($data['buttons']);
-        $this->logger->info('Send ' . $countButtons . ' buttons, caption "' . $data['caption'] . '", urls: ' . join(', ', $urls));
+        $this->logger->info('Send '.$countButtons.' buttons, caption "'.$data['caption'].'", urls: '.join(', ', $urls));
         $this->sendBotMsg(new StructuredMessage($recipient,
             StructuredMessage::TYPE_BUTTON,
             [
                 'text' => $data['caption'],
-                'buttons' => $buttons
+                'buttons' => $buttons,
             ]
         ));
     }
@@ -92,8 +92,8 @@ class MessengerBotBridge implements BotBridgeInterface
     public function buildButtons(array $data)
     {
         $buttons = [];
-        foreach($data as $item) {
-            $type = ($item['type'] == 'postback') ? MessageButton::TYPE_POSTBACK : MessageButton::TYPE_WEB;
+        foreach ($data as $item) {
+            $type = ('postback' === $item['type']) ? MessageButton::TYPE_POSTBACK : MessageButton::TYPE_WEB;
             $buttons[] = new MessageButton(
                 $type,
                 $item['title'],
@@ -118,7 +118,7 @@ class MessengerBotBridge implements BotBridgeInterface
         $recipient = $recipient ? $recipient : $this->userId;
         $this->sendBotMsg(new StructuredMessage($recipient,
             StructuredMessage::TYPE_GENERIC, [
-                'elements' => $items
+                'elements' => $items,
             ]
         ));
     }
@@ -126,13 +126,13 @@ class MessengerBotBridge implements BotBridgeInterface
     protected function sendBotMsg($msg)
     {
         // if script launched via cli no needs to send msg to bot
-        if(!$this->sendMsgFromCli and php_sapi_name() == "cli") {
+        if (!$this->sendMsgFromCli and 'cli' === php_sapi_name()) {
             $this->logger->alert("SKIP SEND MSG BECAUSE SCRIPT LAUNCHED VIA CLI\n");
             return;
         }
         $res = $this->bot->send($msg);
-        if(isset($res['error'])) {
-            throw new \Exception('Api returned error: ' . print_r($res, true));
+        if (isset($res['error'])) {
+            throw new \Exception('Api returned error: '.print_r($res, true));
         }
     }
 }
