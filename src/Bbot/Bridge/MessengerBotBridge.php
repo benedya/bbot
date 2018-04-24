@@ -8,21 +8,22 @@ use pimax\Messages\Message;
 use pimax\Messages\MessageButton;
 use pimax\Messages\MessageElement;
 use pimax\Messages\StructuredMessage;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
 class MessengerBotBridge implements BotBridgeInterface
 {
-    use LoggerAwareTrait;
-
     /** @var FbBotApp */
     protected $bot;
     protected $userId;
     protected $sendMsgFromCli;
+    /** @var LoggerInterface  */
+    protected $logger;
 
-    function __construct($pageToken, $userId, $sendMsgFromCli = false)
+    function __construct($pageToken, $userId, LoggerInterface $logger, $sendMsgFromCli = false)
     {
         $this->bot = new FbBotApp($pageToken);
         $this->userId = $userId;
+        $this->logger = $logger;
         $this->sendMsgFromCli = $sendMsgFromCli;
     }
 

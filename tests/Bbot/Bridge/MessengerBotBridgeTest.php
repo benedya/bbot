@@ -13,9 +13,9 @@ class MessengerBotBridge extends \PHPUnit_Framework_TestCase
     {
         self::$messengerBridge = new \Bbot\Bridge\MessengerBotBridge(
             '',
-            1
+            1,
+            new CliLogger()
         );
-        self::$messengerBridge->setLogger(new CliLogger());
     }
 
     public static function tearDownAfterClass()

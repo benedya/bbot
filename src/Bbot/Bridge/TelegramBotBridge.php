@@ -2,23 +2,27 @@
 
 namespace Bbot\Bridge;
 
-use Psr\Log\LoggerAwareTrait;
+use DoctrineExtensions\Query\Mysql\Log;
+use Psr\Log\LoggerInterface;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use TelegramBot\Api\Types\ReplyKeyboardHide;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
 class TelegramBotBridge implements BotBridgeInterface
 {
-    use LoggerAwareTrait;
-
     protected $sendMsgFromCli;
     protected $chatId;
     protected $messageId;
     protected $userData;
+    /** @var LoggerInterface */
+    protected $logger;
+    /** @var \TelegramBot\Api\BotApi  */
+    protected $bot;
 
-    function __construct($apiKey, array $userData, $sendMsgFromCli = false)
+    function __construct($apiKey, array $userData, LoggerInterface $logger, $sendMsgFromCli = false)
     {
         $this->userData = $userData;
+        $this->logger = $logger;
         $this->chatId = $userData['id'];
         $this->bot = new \TelegramBot\Api\BotApi($apiKey);
         $this->sendMsgFromCli = $sendMsgFromCli;

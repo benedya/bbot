@@ -13,9 +13,9 @@ class TelegramBotBridgeTest extends \PHPUnit_Framework_TestCase
     {
         self::$messengerBridge = new \Bbot\Bridge\TelegramBotBridge(
             '',
-            ['id' => 1]
+            ['id' => 1],
+            new CliLogger()
         );
-        self::$messengerBridge->setLogger(new CliLogger());
     }
 
     public static function tearDownAfterClass()
