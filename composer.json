@@ -19,7 +19,8 @@
     "psr/log": "^1.0",
     "pimax/fb-messenger-php": "1.0.*",
     "php": ">=7.1",
-    "telegram-bot/api": "v2.3.*"
+    "telegram-bot/api": "v2.3.*",
+    "psr/container": "@stable"
   },
   "autoload": {
     "psr-0": {
