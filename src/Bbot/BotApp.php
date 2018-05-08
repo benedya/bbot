@@ -19,8 +19,6 @@ class BotApp extends Container
 
     public function __construct(BotBridgeInterface $botBridge, AbstractBotRequest $botRequest, LoggerInterface $logger)
     {
-        $botBridge->setLogger($logger);
-        $this->logger = $logger;
         $this['welcome'] = $this->share(function () {
             return new \Bbot\Handler\WelcomeHandler($this);
         });
