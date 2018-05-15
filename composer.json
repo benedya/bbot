@@ -20,7 +20,8 @@
     "pimax/fb-messenger-php": "1.0.*",
     "php": ">=7.1",
     "telegram-bot/api": "v2.3.*",
-    "psr/container": "@stable"
+    "psr/container": "@stable",
+    "pimple/pimple": "^3.0"
   },
   "autoload": {
     "psr-0": {
