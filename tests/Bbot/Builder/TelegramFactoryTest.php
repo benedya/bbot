@@ -17,6 +17,11 @@ class TelegramFactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public static function tearDownAfterClass()
+    {
+        self::$factory = null;
+    }
+
     public function testGetRequest()
     {
         $this->assertInstanceOf(
