@@ -7,9 +7,9 @@ use Bbot\Request\Request;
 
 class TelegramFactory extends Factory
 {
-    /** @var string  */
+    /** @var string */
     protected $apiKey;
-    /** @var int  */
+    /** @var int */
     protected $chatId;
 
     public function __construct(string $apiKey, int $chatId)

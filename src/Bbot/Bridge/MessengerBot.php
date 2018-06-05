@@ -57,6 +57,7 @@ class MessengerBot implements Bot
     {
         $fbUser = (array) $this->bot->userProfile($this->userId);
         $fbUser = array_pop($fbUser);
+
         return array_merge($fbUser, ['id' => $this->userId]);
     }
 
@@ -128,6 +129,7 @@ class MessengerBot implements Bot
         // if script launched via cli no needs to send msg to bot
         if (!$this->sendMsgFromCli and 'cli' === php_sapi_name()) {
             $this->logger->alert("SKIP SEND MSG BECAUSE SCRIPT LAUNCHED VIA CLI\n");
+
             return;
         }
         $res = $this->bot->send($msg);

@@ -9,7 +9,7 @@ use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
 class TelegramBot implements Bot
 {
-    /** @var int  */
+    /** @var int */
     protected $chatId;
     /** @var LoggerInterface */
     protected $logger;

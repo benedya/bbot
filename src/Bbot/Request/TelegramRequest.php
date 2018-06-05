@@ -6,12 +6,12 @@ class TelegramRequest implements Request
 {
     protected $data;
 
-    function __construct(array $data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
 
-    function isText(): bool
+    public function isText(): bool
     {
         $msgData = end($this->data);
         reset($this->data);
@@ -19,24 +19,24 @@ class TelegramRequest implements Request
         return isset($msgData['text']) && $msgData['text'];
     }
 
-    function getData()
+    public function getData()
     {
         // todo
     }
 
-    function getPostback()
+    public function getPostback()
     {
         // todo
     }
 
-    static function fromArray(array $data): Request
+    public static function fromArray(array $data): Request
     {
         $response = new static($data);
 
         return $response;
     }
 
-    function getPlatform(): string
+    public function getPlatform(): string
     {
         return 'telegram';
     }

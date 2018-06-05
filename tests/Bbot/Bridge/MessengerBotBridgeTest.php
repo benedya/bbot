@@ -6,7 +6,7 @@ use Bbot\CliLogger;
 
 class MessengerBotBridge extends \PHPUnit_Framework_TestCase
 {
-    /** @var  \Bbot\Bridge\MessengerBotBridge */
+    /** @var \Bbot\Bridge\MessengerBotBridge */
     protected static $messengerBridge;
 
     public static function setUpBeforeClass()
@@ -112,8 +112,9 @@ class MessengerBotBridge extends \PHPUnit_Framework_TestCase
         $buttons[] = [
             'type' => 'postback',
             'title' => 'Show me the google',
-            'url' => 'http://google.com'
+            'url' => 'http://google.com',
         ];
+
         return [[$buttons]];
     }
 }

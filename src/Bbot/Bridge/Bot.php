@@ -4,21 +4,21 @@ namespace Bbot\Bridge;
 
 interface Bot
 {
-    function sendText($text, $recipient = null);
+    public function sendText($text, $recipient = null);
 
-    function sendKeyboard($text, array $keyboard, $recipient = null);
+    public function sendKeyboard($text, array $keyboard, $recipient = null);
 
-    function hideKeyboard($text, $recipient = null);
+    public function hideKeyboard($text, $recipient = null);
 
-    function sendImg($path, $caption = null, $recipient = null);
+    public function sendImg($path, $caption = null, $recipient = null);
 
-    function sendButtons(array $data, $recipient = null);
+    public function sendButtons(array $data, $recipient = null);
 
-    function sendListItems(array $items, $recipient = null);
+    public function sendListItems(array $items, $recipient = null);
 
-    function buildButtons(array $data);
+    public function buildButtons(array $data);
 
-    function buildItemWithButtons(array $data, array $buttons);
+    public function buildItemWithButtons(array $data, array $buttons);
 
-    function getTarget();
+    public function getTarget();
 }

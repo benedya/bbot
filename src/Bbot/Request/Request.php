@@ -4,13 +4,13 @@ namespace Bbot\Request;
 
 interface Request
 {
-    function isText(): bool;
+    public function isText(): bool;
 
-    function getData();
+    public function getData();
 
-    function getPostback();
+    public function getPostback();
 
-    static function fromArray(array $data): Request;
+    public static function fromArray(array $data): Request;
 
-    function getPlatform(): string;
+    public function getPlatform(): string;
 }

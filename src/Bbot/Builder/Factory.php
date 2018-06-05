@@ -5,7 +5,6 @@ namespace Bbot\Builder;
 use Bbot\Bridge\Bot;
 use Bbot\Kernel;
 use Bbot\Provider\AppProvider;
-use Bbot\Request\AbstractBotRequest;
 use Bbot\Request\Request;
 
 abstract class Factory

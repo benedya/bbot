@@ -34,6 +34,7 @@ abstract class AbstractBotRequest
         if ($this->action and $this->handler) {
             return true;
         }
+
         return false;
     }
 
@@ -56,6 +57,7 @@ abstract class AbstractBotRequest
     public function set($key, $value)
     {
         $this->requestOptions[$key] = $value;
+
         return $this;
     }
 
@@ -75,6 +77,7 @@ abstract class AbstractBotRequest
     public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -86,6 +89,7 @@ abstract class AbstractBotRequest
     public function setHandler($handler)
     {
         $this->handler = $handler;
+
         return $this;
     }
 
@@ -97,6 +101,7 @@ abstract class AbstractBotRequest
     public function setRequestOptions($requestOptions)
     {
         $this->requestOptions = $requestOptions;
+
         return $this;
     }
 
@@ -108,6 +113,7 @@ abstract class AbstractBotRequest
     public function setIsTriggered($isTriggered)
     {
         $this->isTriggered = $isTriggered;
+
         return $this;
     }
 
@@ -127,6 +133,7 @@ abstract class AbstractBotRequest
     public function setSimpleText($simpleText)
     {
         $this->simpleText = $simpleText;
+
         return $this;
     }
 
@@ -154,6 +161,7 @@ abstract class AbstractBotRequest
     public function setIsTextMsg($isTextMsg)
     {
         $this->isTextMsg = $isTextMsg;
+
         return $this;
     }
 

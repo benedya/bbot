@@ -6,7 +6,7 @@ class TelegramFactoryTest extends \PHPUnit_Framework_TestCase
 {
     protected $exampleRequestMsg = '{"update_id":1,"channel_post":{"message_id":1,"chat":{"id":-1,"title":"Title","username":"username","type":"channel"},"date":1527529238,"text":"Since yesterday"}}';
 
-    /** @var  \Bbot\Builder\TelegramFactory */
+    /** @var \Bbot\Builder\TelegramFactory */
     protected static $factory;
 
     public static function setUpBeforeClass()

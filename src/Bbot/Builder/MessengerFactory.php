@@ -20,6 +20,7 @@ class MessengerFactory extends Factory
     {
         // todo it needs improve
         $message = $data['entry'][0]['messaging']['0'];
+
         return new \Bbot\Request\MessengerRequest($message);
     }
 

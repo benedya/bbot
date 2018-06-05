@@ -29,7 +29,7 @@ class KernelTest extends \PHPUnit_Framework_TestCase
                     -1,
                     new NullLogger()
                 )
-            )), new \Bbot\Request\TelegramRequest(json_decode($this->exampleTelegramRequestMsg, true))]
+            )), new \Bbot\Request\TelegramRequest(json_decode($this->exampleTelegramRequestMsg, true))],
             // todo implement kernels for others bot-platforms
         ];
     }

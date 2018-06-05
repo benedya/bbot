@@ -9,6 +9,6 @@ class TextController
 {
     public function index(Request $request, ContainerInterface $container)
     {
-        echo "Hey from text controller";
+        echo 'Hey from text controller';
     }
 }

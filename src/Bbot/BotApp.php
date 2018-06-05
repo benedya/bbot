@@ -61,6 +61,7 @@ class BotApp extends Container
         if (self::EVENT_SIGNAL_INTERRUPT !== $signal) {
             $result = $handler->{$method}($botRequest);
             $this->dispatchEvent(self::EVENT_TYPE_AFTER_HANDLER);
+
             return $result;
         }
     }
@@ -72,6 +73,7 @@ class BotApp extends Container
             .$action.'" request options '
             .print_r($botRequest->getRequestOptions(), true));
         $botRequest->setHandler($handler)->setAction($action)->setIsTriggered(true);
+
         return $this->handleRequest($botRequest);
     }
 
@@ -81,6 +83,7 @@ class BotApp extends Container
             $this->events[$type] = [];
         }
         $this->events[$type][] = $closure;
+
         return $this;
     }
 
