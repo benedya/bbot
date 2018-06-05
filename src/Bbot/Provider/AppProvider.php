@@ -9,7 +9,7 @@ class AppProvider implements \Pimple\ServiceProviderInterface
 {
     public function register(Container $pimple)
     {
-        $pimple[TextController::class] = function () {
+        $pimple['text_controller'] = function () {
             return new TextController();
         };
     }

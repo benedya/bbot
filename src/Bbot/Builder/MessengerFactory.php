@@ -1,10 +1,10 @@
 <?php
 
-namespace Bbot\AppBuilder;
+namespace Bbot\Builder;
 
 use Bbot\Request\AbstractBotRequest;
 
-class MessengerFactory extends AbstractFactory
+class MessengerFactory extends Factory
 {
     protected $pageToken;
 

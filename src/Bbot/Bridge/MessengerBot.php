@@ -10,7 +10,7 @@ use pimax\Messages\MessageElement;
 use pimax\Messages\StructuredMessage;
 use Psr\Log\LoggerInterface;
 
-class MessengerBotBridge implements BotBridgeInterface
+class MessengerBot implements Bot
 {
     /** @var FbBotApp */
     protected $bot;

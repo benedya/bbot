@@ -2,28 +2,36 @@
 
 namespace Bbot;
 
+use Bbot\Bridge\Bot;
+use Bbot\Provider\AppProvider;
 use Bbot\Request\Request;
 use Psr\Container\ContainerInterface;
 use Pimple\Psr11\Container as PsrContainer;
 use Pimple\Container;
+
 class Kernel
 {
+    /** @var bool  */
     protected $booted = false;
     /** @var ContainerInterface */
     protected $container;
+    /** @var array  */
     protected $serviceProviders;
+    /** @var Bot  */
+    protected $bot;
 
-    function __construct(array $serviceProviders)
+    function __construct(array $serviceProviders, Bot $bot)
     {
         $this->serviceProviders = $serviceProviders;
+        $this->bot = $bot;
     }
 
     public function handle(Request $request)
     {
         $this->boot();
 
-        if ($controller = $this->getController($request)) {
-            \call_user_func_array($controller,[$request, $this->container]);
+        if ($handlerData = $this->getController($request)) {
+            \call_user_func_array($handlerData,[$request, $this->container]);
         } else {
             // todo ?
         }
@@ -44,16 +52,16 @@ class Kernel
         $container = new Container();
 
         foreach ($this->serviceProviders as $provider) {
-            $container->register( new $provider);
+            $container->register(new $provider);
         }
 
         $this->container = new PsrContainer($container);
     }
 
-    protected function getController(Request $request): callable
+    protected function getController(Request $request)
     {
         if ($request->isText()) {
-            // todo TextController
+            return [$this->container->get('text_controller'), 'index'];
         } else {
             if (Router::fromPostback($request)) {
                 //
