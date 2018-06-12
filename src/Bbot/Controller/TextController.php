@@ -2,13 +2,14 @@
 
 namespace Bbot\Controller;
 
+use Bbot\Bridge\Bot;
 use Bbot\Request\Request;
 use Psr\Container\ContainerInterface;
 
 class TextController
 {
-    public function index(Request $request, ContainerInterface $container)
+    public function index(Request $request, Bot $bot, ContainerInterface $container)
     {
-        echo 'Hey from text controller';
+        $bot->sendText('Hey' . $request->getData()['text']);
     }
 }

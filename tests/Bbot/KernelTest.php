@@ -25,8 +25,8 @@ class KernelTest extends \PHPUnit_Framework_TestCase
             [(new Kernel(
                 [new AppProvider()],
                 new \Bbot\Bridge\TelegramBot(
-                    'key',
-                    -1,
+                    getenv('telegram_api_key'),
+                    getenv('telegram_chat_id'),
                     new NullLogger()
                 )
             )), new \Bbot\Request\TelegramRequest(json_decode($this->exampleTelegramRequestMsg, true))],

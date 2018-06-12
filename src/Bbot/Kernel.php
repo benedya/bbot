@@ -30,7 +30,7 @@ class Kernel
         $this->boot();
 
         if ($handlerData = $this->getController($request)) {
-            \call_user_func_array($handlerData, [$request, $this->container]);
+            \call_user_func_array($handlerData, [$request, $this->bot, $this->container]);
         } else {
             // todo ?
         }
@@ -63,6 +63,7 @@ class Kernel
             return [$this->container->get('text_controller'), 'index'];
         } else {
             if (Router::fromPostback($request)) {
+
             }
         }
     }

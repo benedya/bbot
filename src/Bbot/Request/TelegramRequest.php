@@ -13,15 +13,12 @@ class TelegramRequest implements Request
 
     public function isText(): bool
     {
-        $msgData = end($this->data);
-        reset($this->data);
-
-        return isset($msgData['text']) && $msgData['text'];
+        return isset($this->data['text']) && $this->data['text'];
     }
 
     public function getData()
     {
-        // todo
+        return $this->data;
     }
 
     public function getPostback()
