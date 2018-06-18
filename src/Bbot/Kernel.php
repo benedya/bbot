@@ -16,6 +16,8 @@ class Kernel
     protected $container;
     /** @var array */
     protected $serviceProviders;
+    /** @var array */
+    protected $controllers = [];
     /** @var Bot */
     protected $bot;
 
@@ -35,6 +37,13 @@ class Kernel
             // todo ?
         }
         // todo handle request
+    }
+
+    public function setTextController(string $class): self
+    {
+        $this->controllers['text'] = $class;
+
+        return $this;
     }
 
     protected function boot()
@@ -60,7 +69,11 @@ class Kernel
     protected function getController(Request $request)
     {
         if ($request->isText()) {
-            return [$this->container->get('text_controller'), 'index'];
+            if (isset($this->controllers['text'])) {
+                return [new $this->controllers['text'], 'index'];
+            } else {
+                throw new \Error('Controller with `index` action for handling text requests not set.');
+            }
         } else {
             if (Router::fromPostback($request)) {
 

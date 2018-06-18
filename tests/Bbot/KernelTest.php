@@ -2,6 +2,7 @@
 
 namespace Bbot\Tests;
 
+use Bbot\Controller\TextController;
 use Bbot\Kernel;
 use Bbot\Provider\AppProvider;
 use Bbot\Request\TelegramRequest;
@@ -27,7 +28,7 @@ class KernelTest extends \PHPUnit_Framework_TestCase
                     getenv('TELEGRAM_CHAT_ID'),
                     new NullLogger()
                 )
-            )), new \Bbot\Request\TelegramRequest(json_decode(getenv('TELEGRAM_REQUEST'), true))],
+            ))->setTextController(TextController::class), new \Bbot\Request\TelegramRequest(json_decode(getenv('TELEGRAM_REQUEST'), true))],
             // todo implement kernels for others bot-platforms
         ];
     }

@@ -20,11 +20,12 @@ while (true) {
             if ($offset == $item['update_id']) {
                 continue;
             }
-            print_r($item);
+
             $offset = $item['update_id'];
 
             (new \Bbot\Builder\TelegramFactory($apiKey, $item['message']['chat']['id']))
                 ->buildKernel()
+                ->setTextController(\Bbot\Controller\TextController::class)
                 ->handle(\Bbot\Request\TelegramRequest::fromArray($item))
             ;
         }
