@@ -9,8 +9,6 @@ use Psr\Log\NullLogger;
 
 class KernelTest extends \PHPUnit_Framework_TestCase
 {
-    protected $exampleTelegramRequestMsg = '{"update_id":1,"channel_post":{"message_id":1,"chat":{"id":-1,"title":"Title","username":"username","type":"channel"},"date":1527529238,"text":"Since yesterday"}}';
-
     /**
      * @dataProvider kernelProvider
      */
@@ -25,11 +23,11 @@ class KernelTest extends \PHPUnit_Framework_TestCase
             [(new Kernel(
                 [new AppProvider()],
                 new \Bbot\Bridge\TelegramBot(
-                    getenv('telegram_api_key'),
-                    getenv('telegram_chat_id'),
+                    getenv('TELEGRAM_API_KEY'),
+                    getenv('TELEGRAM_CHAT_ID'),
                     new NullLogger()
                 )
-            )), new \Bbot\Request\TelegramRequest(json_decode($this->exampleTelegramRequestMsg, true))],
+            )), new \Bbot\Request\TelegramRequest(json_decode(getenv('TELEGRAM_REQUEST'), true))],
             // todo implement kernels for others bot-platforms
         ];
     }

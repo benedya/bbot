@@ -10,6 +10,6 @@ class TextController
 {
     public function index(Request $request, Bot $bot, ContainerInterface $container)
     {
-        $bot->sendText('Hey' . $request->getData()['text']);
+        $bot->sendText('Hey' . $request->getData()['message']['text']);
     }
 }
