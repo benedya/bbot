@@ -16,6 +16,18 @@ class TelegramRequest implements Request
         return isset($this->data['message']['text']) ? true : false;
     }
 
+    public function get(string $key)
+    {
+        static $postbackParameters;
+
+        if (!$postbackParameters and $postback = $this->getPostback()) {
+            $postback = preg_replace("/.*\?/", '', $postback);
+            parse_str($postback, $postbackParameters);
+        }
+
+        return $postbackParameters[$key] ?? null;
+    }
+
     public function getData()
     {
         return $this->data;
@@ -23,7 +35,7 @@ class TelegramRequest implements Request
 
     public function getPostback()
     {
-        // todo
+        return $this->data['callback_query']['data'] ?? null;
     }
 
     public static function fromArray(array $data): Request

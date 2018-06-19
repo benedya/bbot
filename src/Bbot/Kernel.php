@@ -70,13 +70,24 @@ class Kernel
     {
         if ($request->isText()) {
             if (isset($this->controllers['text'])) {
-                return [new $this->controllers['text'], 'index'];
+                return [new $this->controllers['text'](), 'index'];
             } else {
                 throw new \Error('Controller with `index` action for handling text requests not set.');
             }
         } else {
-            if (Router::fromPostback($request)) {
+            if ($postback = Router::fromPostback($request)) {
+                $class = $postback['0'] ?? '';
+                $method = $postback['1'] ?? '';
 
+                if (!class_exists($class)) {
+                    throw new \Error(sprintf('Class "%s" not found.', $class));
+                }
+
+                if (!method_exists($class, $method)) {
+                    throw new \Error(sprintf('Method "%s" not found in class "%s".', $method, $class));
+                }
+
+                return [new $class(), $method];
             }
         }
     }

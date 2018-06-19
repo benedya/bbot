@@ -20,15 +20,18 @@ class KernelTest extends \PHPUnit_Framework_TestCase
 
     public function kernelProvider()
     {
+        $kernel = (new Kernel(
+            [new AppProvider()],
+            new \Bbot\Bridge\TelegramBot(
+                getenv('TELEGRAM_API_KEY'),
+                getenv('TELEGRAM_CHAT_ID'),
+                new NullLogger()
+            )
+        ))->setTextController(TextController::class);
+
         return [
-            [(new Kernel(
-                [new AppProvider()],
-                new \Bbot\Bridge\TelegramBot(
-                    getenv('TELEGRAM_API_KEY'),
-                    getenv('TELEGRAM_CHAT_ID'),
-                    new NullLogger()
-                )
-            ))->setTextController(TextController::class), new \Bbot\Request\TelegramRequest(json_decode(getenv('TELEGRAM_REQUEST'), true))],
+            [$kernel, new \Bbot\Request\TelegramRequest(json_decode(getenv('TELEGRAM_REQUEST'), true))],
+            [$kernel, new \Bbot\Request\TelegramRequest(json_decode(getenv('TELEGRAM_POSTBACK_REQUEST'), true))],
             // todo implement kernels for others bot-platforms
         ];
     }

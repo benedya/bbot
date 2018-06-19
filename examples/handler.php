@@ -1,12 +1,27 @@
 <?php
 
-require "../vendor/autoload.php";
+require '../vendor/autoload.php';
 
 $apiKey = getenv('TELEGRAM_API_KEY');
 
 $bot = new \TelegramBot\Api\BotApi($apiKey);
 
 $offset = 0;
+
+function getChatId(array $message)
+{
+    $chatId = null;
+
+    foreach ($message as $k => $v) {
+        if ('chat' == $k) {
+            $chatId = $v['id'];
+        } elseif (is_array($v)) {
+            $chatId = getChatId($v);
+        }
+    }
+
+    return $chatId;
+}
 
 while (true) {
     $data = $bot->call('getUpdates', [
@@ -22,14 +37,15 @@ while (true) {
             }
 
             $offset = $item['update_id'];
+            $chatId = getChatId($item);
 
-            (new \Bbot\Builder\TelegramFactory($apiKey, $item['message']['chat']['id']))
+            (new \Bbot\Builder\TelegramFactory($apiKey, $chatId))
                 ->buildKernel()
                 ->setTextController(\Bbot\Controller\TextController::class)
                 ->handle(\Bbot\Request\TelegramRequest::fromArray($item))
             ;
         }
     }
-    echo '.' . $offset;
+    echo '.'.$offset;
     sleep(1);
 }

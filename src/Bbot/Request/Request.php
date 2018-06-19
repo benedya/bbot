@@ -6,6 +6,8 @@ interface Request
 {
     public function isText(): bool;
 
+    public function get(string $key);
+
     public function getData();
 
     public function getPostback();
