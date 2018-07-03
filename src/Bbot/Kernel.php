@@ -32,7 +32,12 @@ class Kernel
         $this->boot();
 
         if ($handlerData = $this->getController($request)) {
-            \call_user_func_array($handlerData, [$request, $this->bot, $this->container]);
+            \call_user_func_array($handlerData, [
+                $request,
+                $this->bot,
+                $this->container->get('router'),
+                $this->container,
+            ]);
         } else {
             // todo ?
         }
@@ -75,7 +80,7 @@ class Kernel
                 throw new \Error('Controller with `index` action for handling text requests not set.');
             }
         } else {
-            if ($postback = Router::fromPostback($request)) {
+            if ($postback = $this->container->get('router')->fromPostback($request)) {
                 $class = $postback['0'] ?? '';
                 $method = $postback['1'] ?? '';
 

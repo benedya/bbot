@@ -4,12 +4,11 @@ namespace Bbot\Controller;
 
 use Bbot\Bridge\Bot;
 use Bbot\Request\Request;
-use Bbot\Router;
-use Psr\Container\ContainerInterface;
+use Bbot\Route\Router;
 
 class TextController
 {
-    public function index(Request $request, Bot $bot, ContainerInterface $container)
+    public function index(Request $request, Bot $bot, Router $router)
     {
         $bot->sendText(sprintf('Hey from "%s" controller ;)', get_class($this)));
 
@@ -19,7 +18,7 @@ class TextController
                 [
                     'type' => 'postback',
                     'title' => 'Yes',
-                    'url' => Router::toPostback(TextController::class, 'button', [
+                    'url' => $router->toPostback(TextController::class, 'button', [
                         'action' => 'confirm',
                     ]),
                 ],
@@ -27,7 +26,7 @@ class TextController
         ]);
     }
 
-    public function button(Request $request, Bot $bot, ContainerInterface $container)
+    public function button(Request $request, Bot $bot, Router $router)
     {
         $bot->sendText('Hey from button '.$request->get('action'));
     }
