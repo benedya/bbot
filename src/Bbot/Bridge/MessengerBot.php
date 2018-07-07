@@ -2,139 +2,86 @@
 
 namespace Bbot\Bridge;
 
-use pimax\FbBotApp;
-use pimax\Messages\ImageMessage;
-use pimax\Messages\Message;
-use pimax\Messages\MessageButton;
-use pimax\Messages\MessageElement;
-use pimax\Messages\StructuredMessage;
-use Psr\Log\LoggerInterface;
-
 class MessengerBot implements Bot
 {
-    /** @var FbBotApp */
-    protected $bot;
-    protected $userId;
-    protected $sendMsgFromCli;
-    /** @var LoggerInterface */
-    protected $logger;
-
-    public function __construct($pageToken, $userId, LoggerInterface $logger, $sendMsgFromCli = false)
+    public function sendText($text, $recipient = null)
     {
-        $this->bot = new FbBotApp($pageToken);
-        $this->userId = $userId;
-        $this->logger = $logger;
-        $this->sendMsgFromCli = $sendMsgFromCli;
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
     }
 
     public function sendKeyboard($text, array $keyboard, $recipient = null)
     {
-        $this->logger->alert('This is not supported yet.');
-        // todo implement when it will be possible
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
     }
 
     public function hideKeyboard($text, $recipient = null)
     {
-        $this->logger->alert('This is not supported yet.');
-        // todo implement when it will be possible
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
     }
 
     public function sendImg($path, $caption = null, $recipient = null)
     {
-        $recipient = $recipient ? $recipient : $this->userId;
-        $this->sendBotMsg(new ImageMessage($recipient, $path));
-        if ($caption) {
-            $this->sendText($caption, $recipient);
-        }
-    }
-
-    public function getUserId()
-    {
-        return $this->userId;
-    }
-
-    public function getUserProfile()
-    {
-        $fbUser = (array) $this->bot->userProfile($this->userId);
-        $fbUser = array_pop($fbUser);
-
-        return array_merge($fbUser, ['id' => $this->userId]);
-    }
-
-    public function sendText($text, $recipient = null)
-    {
-        $this->logger->info('Send text: "'.$text.'"');
-        $recipient = $recipient ? $recipient : $this->userId;
-        $this->sendBotMsg(new Message($recipient, $text));
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
     }
 
     public function sendButtons(array $data, $recipient = null)
     {
-        $recipient = $recipient ? $recipient : $this->userId;
-        $countButtons = count($data['buttons']);
-        if ($countButtons < 1 or $countButtons > 3) {
-            throw new \Exception('Number of must be from 1 till 3, got '.$countButtons.', data '.print_r($data, true));
-        }
-        $urls = [];
-        array_walk($data['buttons'], function ($item) use (&$urls) {
-            $urls[] = $item['url'];
-        });
-        $buttons = $this->buildButtons($data['buttons']);
-        $this->logger->info('Send '.$countButtons.' buttons, caption "'.$data['caption'].'", urls: '.join(', ', $urls));
-        $this->sendBotMsg(new StructuredMessage($recipient,
-            StructuredMessage::TYPE_BUTTON,
-            [
-                'text' => $data['caption'],
-                'buttons' => $buttons,
-            ]
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
+
+    public function sendListItems(array $items, $recipient = null)
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
         ));
     }
 
     public function buildButtons(array $data)
     {
-        $buttons = [];
-        foreach ($data as $item) {
-            $type = ('postback' === $item['type']) ? MessageButton::TYPE_POSTBACK : MessageButton::TYPE_WEB;
-            $buttons[] = new MessageButton(
-                $type,
-                $item['title'],
-                $item['url']
-            );
-        }
-
-        return $buttons;
-    }
-
-    public function buildItemWithButtons(array $data, array $buttons = [])
-    {
-        return new MessageElement(
-            $data['title'],
-            $data['subtitle'],
-            (isset($data['image']) ? $data['image'] : ''),
-            $this->buildButtons($buttons));
-    }
-
-    public function sendListItems(array $items, $recipient = null)
-    {
-        $recipient = $recipient ? $recipient : $this->userId;
-        $this->sendBotMsg(new StructuredMessage($recipient,
-            StructuredMessage::TYPE_GENERIC, [
-                'elements' => $items,
-            ]
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
         ));
     }
 
-    protected function sendBotMsg($msg)
+    public function buildItemWithButtons(array $data, array $buttons)
     {
-        // if script launched via cli no needs to send msg to bot
-        if (!$this->sendMsgFromCli and 'cli' === php_sapi_name()) {
-            $this->logger->alert("SKIP SEND MSG BECAUSE SCRIPT LAUNCHED VIA CLI\n");
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
 
-            return;
-        }
-        $res = $this->bot->send($msg);
-        if (isset($res['error'])) {
-            throw new \Exception('Api returned error: '.print_r($res, true));
-        }
+    public function getTarget()
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
     }
 }
