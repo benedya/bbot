@@ -65,7 +65,7 @@ class Kernel
         $container = new Container();
 
         foreach ($this->serviceProviders as $provider) {
-            $container->register(new $provider());
+            $container->register($provider);
         }
 
         $this->container = new PsrContainer($container);
@@ -81,8 +81,9 @@ class Kernel
             }
         } else {
             if ($postback = $this->container->get('router')->fromPostback($request)) {
-                $class = $postback['0'] ?? '';
-                $method = $postback['1'] ?? '';
+                $class = $postback['class'] ?? '';
+                $method = $postback['method'] ?? '';
+                $parameters = $postback['parameters'] ?? [];
 
                 if (!class_exists($class)) {
                     throw new \Error(sprintf('Class "%s" not found.', $class));
@@ -90,6 +91,10 @@ class Kernel
 
                 if (!method_exists($class, $method)) {
                     throw new \Error(sprintf('Method "%s" not found in class "%s".', $method, $class));
+                }
+
+                if ($parameters) {
+                    $request->setParameters($parameters);
                 }
 
                 return [new $class(), $method];

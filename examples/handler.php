@@ -40,7 +40,20 @@ while (true) {
             $chatId = getChatId($item);
 
             (new \Bbot\Builder\TelegramFactory($apiKey, $chatId))
-                ->buildKernel()
+                ->buildKernel([
+                    new class() implements \Pimple\ServiceProviderInterface {
+                        public function register(\Pimple\Container $pimple)
+                        {
+                            $fileStorage = new \Bbot\Route\Storage\FileStorage(
+                                new \SplFileObject('../.data/storage.json', 'a+')
+                            );
+
+                            $pimple['router'] = function () use ($fileStorage) {
+                                return new \Bbot\Route\Router($fileStorage);
+                            };
+                        }
+                    },
+                ])
                 ->setTextController(\Bbot\Controller\TextController::class)
                 ->handle(\Bbot\Request\TelegramRequest::fromArray($item))
             ;

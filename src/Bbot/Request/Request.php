@@ -15,4 +15,6 @@ interface Request
     public static function fromArray(array $data): Request;
 
     public function getPlatform(): string;
+
+    public function setParameters(array $parameters);
 }

@@ -36,9 +36,20 @@ class Router
                 throw new  \Exception(sprintf('Data by key "%s" not found in storage.', $key));
             }
 
-            $postback = preg_replace("/\?.*/", '', $postback);
+            $postback = explode('?', $postback);
+            $postbackParameters = [];
 
-            return explode($this->delimiter, $postback);
+            if (isset($postback['1'])) {
+                parse_str($postback['1'], $postbackParameters);
+            }
+
+            $postback = explode($this->delimiter, $postback['0']);
+
+            return [
+                'class' => $postback['0'] ?? null,
+                'method' => $postback['1'] ?? null,
+                'parameters' => $postbackParameters,
+            ];
         }
 
         return $result;

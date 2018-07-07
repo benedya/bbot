@@ -13,9 +13,9 @@ abstract class Factory
 
     abstract public function getBot(): Bot;
 
-    public function buildKernel(): Kernel
+    public function buildKernel(array $providers = []): Kernel
     {
-        return new Kernel([new AppProvider()], $this->getBot());
+        return new Kernel(array_merge([new AppProvider()], $providers), $this->getBot());
     }
 
     protected function getLogger()

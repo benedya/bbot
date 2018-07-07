@@ -15,7 +15,7 @@ class AppProvider implements \Pimple\ServiceProviderInterface
 
         $pimple['router'] = function () {
             return new \Bbot\Route\Router(
-                new \Bbot\Route\Storage\SessionStorage()
+                new \Bbot\Route\Storage\ArrayStorage()
             );
         };
     }
