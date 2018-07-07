@@ -20,6 +20,7 @@ class CliLogger extends AbstractLogger
         foreach ($context as $key => $val) {
             $replace['{'.$key.'}'] = $val;
         }
+
         return strtr($message, $replace);
     }
 

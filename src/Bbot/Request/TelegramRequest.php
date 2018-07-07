@@ -2,54 +2,51 @@
 
 namespace Bbot\Request;
 
-class TelegramRequest extends AbstractBotRequest
+class TelegramRequest implements Request
 {
-    public function __construct(array $data, array $conf = [])
+    protected $data;
+
+    public function __construct(array $data)
     {
-        $this->requestData = $data;
-        $this->isPostBack = false;
-        $this->conf = array_merge($this->conf, $conf);
+        $this->data = $data;
     }
 
-    public function processRequestData()
+    public function isText(): bool
     {
-        if (isset($this->requestData['callback_query'])) {
-            $callbackQuery = $this->requestData['callback_query'];
-            $this->simpleText = $callbackQuery['data'];
-            $this->setHandlerData($callbackQuery['data']);
-            $this->userData = $callbackQuery['message']['chat'];
-            $this->isPostBack = true;
-        } else {
-            $isCommand = false;
-            $message = $this->requestData['message'];
-            $this->userData = $message['chat'];
-            if (isset($message['entities']) and count($message['entities'])) {
-                $entity = array_pop($message['entities']);
-                if (isset($entity['type']) and 'bot_command' === $entity['type']) {
-                    $isCommand = true;
-                }
-            }
-            if ($isCommand) {
-                $this->handler = 'commands';
-                $this->action = preg_replace("/^\//", '', $message['text']);
-            } elseif (isset($message['location'])) {
-                $this->requestOptions = $message['location'];
-                $this->set('lat', $message['location']['latitude']);
-                $this->set('lng', $message['location']['longitude']);
-                $this->handler = 'location';
-                $this->action = 'setlocation';
-            } else {
-                $this->isTextMsg = true;
-                $this->simpleText = trim($message['text']);
-                $this->handler = $this->conf['textHandler'];
-                $this->action = $this->conf['textAction'];
-            }
+        return isset($this->data['message']['text']) ? true : false;
+    }
+
+    public function get(string $key)
+    {
+        static $postbackParameters;
+
+        if (!$postbackParameters and $postback = $this->getPostback()) {
+            $postback = preg_replace("/.*\?/", '', $postback);
+            parse_str($postback, $postbackParameters);
         }
-        return $this;
+
+        return $postbackParameters[$key] ?? null;
     }
 
-    public function isBtnClick()
+    public function getData()
     {
-        return $this->isPostBack;
+        return $this->data;
+    }
+
+    public function getPostback()
+    {
+        return $this->data['callback_query']['data'] ?? null;
+    }
+
+    public static function fromArray(array $data): Request
+    {
+        $response = new static($data);
+
+        return $response;
+    }
+
+    public function getPlatform(): string
+    {
+        return 'telegram';
     }
 }

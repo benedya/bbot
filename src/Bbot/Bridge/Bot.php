@@ -2,7 +2,7 @@
 
 namespace Bbot\Bridge;
 
-interface BotBridgeInterface
+interface Bot
 {
     public function sendText($text, $recipient = null);
 
@@ -20,7 +20,5 @@ interface BotBridgeInterface
 
     public function buildItemWithButtons(array $data, array $buttons);
 
-    public function getUserProfile();
-
-    public function getUserId();
+    public function getTarget();
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Bbot\AppBuilder;
+namespace Bbot\Builder;
 
 use Bbot\Request\AbstractBotRequest;
 
-class MessengerFactory extends AbstractFactory
+class MessengerFactory extends Factory
 {
     protected $pageToken;
 
@@ -20,6 +20,7 @@ class MessengerFactory extends AbstractFactory
     {
         // todo it needs improve
         $message = $data['entry'][0]['messaging']['0'];
+
         return new \Bbot\Request\MessengerRequest($message);
     }
 
