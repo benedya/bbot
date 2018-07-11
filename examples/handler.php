@@ -61,7 +61,6 @@ while (true) {
                         }
                     },
                 ])
-                ->setTextController(\Bbot\Controller\TextController::class)
                 ->handle(\Bbot\Request\TelegramRequest::fromArray($item))
             ;
         }

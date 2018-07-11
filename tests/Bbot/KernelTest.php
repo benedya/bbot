@@ -27,7 +27,7 @@ class KernelTest extends \PHPUnit_Framework_TestCase
                 getenv('TELEGRAM_CHAT_ID'),
                 new NullLogger()
             )
-        ))->setTextController(TextController::class);
+        ));
 
         return [
             [$kernel, new \Bbot\Request\TelegramRequest(json_decode(getenv('TELEGRAM_REQUEST'), true))],

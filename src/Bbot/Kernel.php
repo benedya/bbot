@@ -16,8 +16,6 @@ class Kernel
     protected $container;
     /** @var array */
     protected $serviceProviders;
-    /** @var array */
-    protected $controllers = [];
     /** @var Bot */
     protected $bot;
 
@@ -44,13 +42,6 @@ class Kernel
         // todo handle request
     }
 
-    public function setTextController(string $class): self
-    {
-        $this->controllers['text'] = $class;
-
-        return $this;
-    }
-
     protected function boot()
     {
         if (!$this->booted) {
@@ -73,14 +64,19 @@ class Kernel
 
     protected function getController(Request $request)
     {
-        if ($request->isCommand()) {
-            $msg = $request->getTextMessage();
-
-            if (!$controller = $this->container->get('command_controller')) {
-                throw new \Error('Command controller not found.');
+        if ($request->isCommand() or $request->isText()) {
+            if ($request->isCommand()) {
+                $controllerKey = 'command_controller';
+                $msg = $request->getTextMessage();
+                $action = explode(' ', substr($msg, 1))['0'];
+            } else {
+                $controllerKey = 'text_controller';
+                $action = 'index';
             }
 
-            $action = explode(' ', substr($msg, 1))['0'];
+            if (!$controller = $this->container->get($controllerKey)) {
+                throw new \Error(sprintf("Controller '%s' not found.", $controllerKey));
+            }
 
             if (!method_exists($controller, $action)) {
                 throw new \Error(sprintf(
@@ -91,12 +87,6 @@ class Kernel
             }
 
             return [$controller, $action];
-        } elseif ($request->isText()) {
-            if (isset($this->controllers['text'])) {
-                return [new $this->controllers['text'](), 'index'];
-            } else {
-                throw new \Error('Controller with `index` action for handling text requests not set.');
-            }
         } else {
             if ($postback = $this->container->get('router')->fromPostback($request)) {
                 $class = $postback['class'] ?? '';
