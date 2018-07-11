@@ -13,6 +13,24 @@ class MessengerRequest implements Request
         ));
     }
 
+    public function isCommand(): bool
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
+
+    public function getTextMessage(): string
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
+
     public function get(string $key)
     {
         throw new \Error(sprintf(

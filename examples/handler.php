@@ -13,8 +13,9 @@ function getChatId(array $message)
     $chatId = null;
 
     foreach ($message as $k => $v) {
-        if ('chat' == $k) {
+        if ('chat' === $k) {
             $chatId = $v['id'];
+            break;
         } elseif (is_array($v)) {
             $chatId = getChatId($v);
         }
@@ -51,6 +52,12 @@ while (true) {
                             $pimple['router'] = function () use ($fileStorage) {
                                 return new \Bbot\Route\Router($fileStorage);
                             };
+//
+//                          Overriding default command controller
+//
+//                          $pimple['command_controller'] = function () {
+//                               return new \Bbot\Controller\CommandController();
+//                          };
                         }
                     },
                 ])

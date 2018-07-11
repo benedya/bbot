@@ -73,7 +73,25 @@ class Kernel
 
     protected function getController(Request $request)
     {
-        if ($request->isText()) {
+        if ($request->isCommand()) {
+            $msg = $request->getTextMessage();
+
+            if (!$controller = $this->container->get('command_controller')) {
+                throw new \Error('Command controller not found.');
+            }
+
+            $action = explode(' ', substr($msg, 1))['0'];
+
+            if (!method_exists($controller, $action)) {
+                throw new \Error(sprintf(
+                    "Method '%s' not found in controller '%s'",
+                    $action,
+                    get_class($controller)
+                ));
+            }
+
+            return [$controller, $action];
+        } elseif ($request->isText()) {
             if (isset($this->controllers['text'])) {
                 return [new $this->controllers['text'](), 'index'];
             } else {

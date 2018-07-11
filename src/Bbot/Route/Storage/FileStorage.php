@@ -30,7 +30,6 @@ class FileStorage implements RouterStorage
 
     protected function getContainsAsArray(): array
     {
-
         $fileObject = $this->fileObject;
 
         $fileObject->rewind();

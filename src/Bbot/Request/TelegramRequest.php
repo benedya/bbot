@@ -4,7 +4,9 @@ namespace Bbot\Request;
 
 class TelegramRequest implements Request
 {
+    /** @var array */
     protected $data;
+    /** @var array */
     protected $parameters;
 
     public function __construct(array $data)
@@ -15,6 +17,18 @@ class TelegramRequest implements Request
     public function isText(): bool
     {
         return isset($this->data['message']['text']) ? true : false;
+    }
+
+    public function isCommand(): bool
+    {
+        $type = $this->data['message']['entities']['0']['type'] ?? null;
+
+        return  'bot_command' == $type ? true : false;
+    }
+
+    public function getTextMessage(): string
+    {
+        return $this->data['message']['text'] ?? '';
     }
 
     public function get(string $key)

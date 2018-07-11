@@ -2,6 +2,7 @@
 
 namespace Bbot\Provider;
 
+use Bbot\Controller\CommandController;
 use Bbot\Controller\TextController;
 use Pimple\Container;
 
@@ -11,6 +12,10 @@ class AppProvider implements \Pimple\ServiceProviderInterface
     {
         $pimple['text_controller'] = function () {
             return new TextController();
+        };
+
+        $pimple['command_controller'] = function () {
+            return new CommandController();
         };
 
         $pimple['router'] = function () {

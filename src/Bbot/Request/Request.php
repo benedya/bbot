@@ -6,7 +6,11 @@ interface Request
 {
     public function isText(): bool;
 
+    public function isCommand(): bool;
+
     public function get(string $key);
+
+    public function getTextMessage(): string;
 
     public function getData();
 
