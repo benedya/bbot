@@ -4,7 +4,7 @@ namespace Bbot\Builder;
 
 use Bbot\Bridge\Bot;
 use Bbot\Kernel;
-use Bbot\Provider\AppProvider;
+use Bbot\Provider\DefaultProvider;
 use Bbot\Request\Request;
 
 abstract class Factory
@@ -15,7 +15,7 @@ abstract class Factory
 
     public function buildKernel(array $providers = []): Kernel
     {
-        return new Kernel(array_merge([new AppProvider()], $providers), $this->getBot());
+        return new Kernel(array_merge([new DefaultProvider()], $providers), $this->getBot());
     }
 
     protected function getLogger()

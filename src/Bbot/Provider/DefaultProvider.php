@@ -6,7 +6,7 @@ use Bbot\Controller\CommandController;
 use Bbot\Controller\TextController;
 use Pimple\Container;
 
-class AppProvider implements \Pimple\ServiceProviderInterface
+class DefaultProvider implements \Pimple\ServiceProviderInterface
 {
     public function register(Container $pimple)
     {

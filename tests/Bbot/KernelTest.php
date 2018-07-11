@@ -4,7 +4,7 @@ namespace Bbot\Tests;
 
 use Bbot\Controller\TextController;
 use Bbot\Kernel;
-use Bbot\Provider\AppProvider;
+use Bbot\Provider\DefaultProvider;
 use Bbot\Request\TelegramRequest;
 use Psr\Log\NullLogger;
 
@@ -21,7 +21,7 @@ class KernelTest extends \PHPUnit_Framework_TestCase
     public function kernelProvider()
     {
         $kernel = (new Kernel(
-            [new AppProvider()],
+            [new DefaultProvider()],
             new \Bbot\Bridge\TelegramBot(
                 getenv('TELEGRAM_API_KEY'),
                 getenv('TELEGRAM_CHAT_ID'),
