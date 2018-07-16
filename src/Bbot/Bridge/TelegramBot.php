@@ -34,7 +34,7 @@ class TelegramBot implements Bot
     {
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
 
-        $item = new ReplyKeyboardMarkup($keyboard, true);
+        $item = new ReplyKeyboardMarkup($keyboard, true, true);
 
         $this->bot->sendMessage(
             $recipient,
