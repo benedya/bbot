@@ -63,7 +63,26 @@ class Kernel
 
     protected function getController(Request $request)
     {
+        /** @var \Bbot\Route\Router $router */
+        $router = $this->container->get('router');
+        $controller = null;
+        $action = null;
+
+        $processHandlerData = function (array $handlerData) use (&$request) {
+            $class = $handlerData['class'] ?? '';
+            $method = $handlerData['method'] ?? '';
+            $parameters = $handlerData['parameters'] ?? [];
+
+            if ($parameters) {
+                $request->setParameters($parameters);
+            }
+
+            return [$class, $method];
+        };
+
         if ($request->isCommand() or $request->isText()) {
+            $handlerData = null;
+
             if ($request->isCommand()) {
                 $controllerKey = 'command_controller';
                 $msg = $request->getTextMessage();
@@ -71,41 +90,36 @@ class Kernel
             } else {
                 $controllerKey = 'text_controller';
                 $action = 'index';
+                $handlerData = $router->getTxtHandler();
             }
 
-            if (!$controller = $this->container->get($controllerKey)) {
-                throw new \Error(sprintf("Controller '%s' not found.", $controllerKey));
+            if ($handlerData) {
+                list($controller, $action) = $processHandlerData($handlerData);
+            } else {
+                if (!$controller = $this->container->get($controllerKey)) {
+                    throw new \Error(sprintf("Controller '%s' not found.", $controllerKey));
+                }
+            }
+        } else {
+            if ($postback = $router->fromPostback($request)) {
+                list($controller, $action) = $processHandlerData($postback);
+            }
+        }
+
+        if ($controller and $action) {
+            if (is_string($controller)) {
+                if (!class_exists($controller)) {
+                    throw new \Error(sprintf('Class "%s" not found.', $controller));
+                }
+
+                $controller = new $controller();
             }
 
             if (!method_exists($controller, $action)) {
-                throw new \Error(sprintf(
-                    "Method '%s' not found in controller '%s'",
-                    $action,
-                    get_class($controller)
-                ));
+                throw new \Error(sprintf('Method "%s" not found in class "%s".', $controller, $action));
             }
 
             return [$controller, $action];
-        } else {
-            if ($postback = $this->container->get('router')->fromPostback($request)) {
-                $class = $postback['class'] ?? '';
-                $method = $postback['method'] ?? '';
-                $parameters = $postback['parameters'] ?? [];
-
-                if (!class_exists($class)) {
-                    throw new \Error(sprintf('Class "%s" not found.', $class));
-                }
-
-                if (!method_exists($class, $method)) {
-                    throw new \Error(sprintf('Method "%s" not found in class "%s".', $method, $class));
-                }
-
-                if ($parameters) {
-                    $request->setParameters($parameters);
-                }
-
-                return [new $class(), $method];
-            }
         }
     }
 }

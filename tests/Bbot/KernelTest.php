@@ -2,7 +2,6 @@
 
 namespace Bbot\Tests;
 
-use Bbot\Controller\TextController;
 use Bbot\Kernel;
 use Bbot\Provider\DefaultProvider;
 use Bbot\Request\TelegramRequest;

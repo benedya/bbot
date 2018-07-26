@@ -18,8 +18,8 @@ class ArrayStorage implements Storage
 
     public function remove(string $key)
     {
-         if (isset($this->storage[$key])) {
-             unset($this->storage[$key]);
-         }
+        if (isset($this->storage[$key])) {
+            unset($this->storage[$key]);
+        }
     }
 }

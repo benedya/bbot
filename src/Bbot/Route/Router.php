@@ -27,12 +27,37 @@ class Router
         return $key;
     }
 
-    public function fromPostback(Request $request)
+    public function fromPostback(Request $request): array
     {
         $result = [];
 
         if ($key = $request->getPostback()) {
-            $result = $this->decodeQuery($key);
+            if (!$query = $this->storage->get($key)) {
+                throw new  \Error(sprintf('Data by key "%s" not found in storage.', $key));
+            }
+
+            $result = $this->decodeQuery($query);
+        }
+
+        return $result;
+    }
+
+    public function setTxtHandler(string $controller, string $action)
+    {
+        $query = $query = $this->encodeQuery($controller, $action);
+
+        $this->storage->set('txt_msg_handler', $query);
+    }
+
+    public function getTxtHandler(): array
+    {
+        $key = 'txt_msg_handler';
+        $result = [];
+
+        if ($query = $this->storage->get($key)) {
+            $this->storage->remove($key);
+
+            $result = $this->decodeQuery($query);
         }
 
         return $result;
@@ -43,12 +68,8 @@ class Router
         return $controller.$this->delimiter.$action.($data ? '?'.http_build_query($data) : '');
     }
 
-    protected function decodeQuery(string $key): array
+    protected function decodeQuery(string $query): array
     {
-        if (!$query = $this->storage->get($key)) {
-            throw new  \Error(sprintf('Data by key "%s" not found in storage.', $key));
-        }
-
         $data = explode('?', $query);
         $parameters = [];
 
