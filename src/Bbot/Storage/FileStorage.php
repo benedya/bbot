@@ -1,8 +1,8 @@
 <?php
 
-namespace Bbot\Route\Storage;
+namespace Bbot\Storage;
 
-class FileStorage implements RouterStorage
+class FileStorage implements Storage
 {
     /** @var \SplFileObject */
     protected $fileObject;
@@ -26,6 +26,18 @@ class FileStorage implements RouterStorage
         $contains = $this->getContainsAsArray();
 
         return $contains[$key] ?? null;
+    }
+
+    public function remove(string $key)
+    {
+        $contains = $this->getContainsAsArray();
+
+        if (isset($contains[$key])) {
+            unset($contains[$key]);
+        }
+
+        $this->fileObject->ftruncate(0);
+        $this->fileObject->fwrite(json_encode($contains));
     }
 
     protected function getContainsAsArray(): array

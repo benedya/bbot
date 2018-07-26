@@ -3,26 +3,26 @@
 namespace Bbot\Route;
 
 use Bbot\Request\Request;
-use Bbot\Route\Storage\RouterStorage;
+use Bbot\Storage\Storage;
 
 class Router
 {
     /** @var string */
     protected $delimiter = '::';
-    /** @var RouterStorage */
-    protected $routerStorage;
+    /** @var Storage */
+    protected $storage;
 
-    public function __construct(RouterStorage $routerStorage)
+    public function __construct(Storage $storage)
     {
-        $this->routerStorage = $routerStorage;
+        $this->storage = $storage;
     }
 
     public function toPostback(string $controller, string $action, array $data = [])
     {
-        $query = $controller.$this->delimiter.$action.($data ? '?'.http_build_query($data) : '');
+        $query = $this->encodeQuery($controller, $action, $data);
         $key = md5($query);
 
-        $this->routerStorage->set($key, $query);
+        $this->storage->set($key, $query);
 
         return $key;
     }
@@ -32,26 +32,36 @@ class Router
         $result = [];
 
         if ($key = $request->getPostback()) {
-            if (!$postback = $this->routerStorage->get($key)) {
-                throw new  \Exception(sprintf('Data by key "%s" not found in storage.', $key));
-            }
-
-            $postback = explode('?', $postback);
-            $postbackParameters = [];
-
-            if (isset($postback['1'])) {
-                parse_str($postback['1'], $postbackParameters);
-            }
-
-            $postback = explode($this->delimiter, $postback['0']);
-
-            return [
-                'class' => $postback['0'] ?? null,
-                'method' => $postback['1'] ?? null,
-                'parameters' => $postbackParameters,
-            ];
+            $result = $this->decodeQuery($key);
         }
 
         return $result;
+    }
+
+    protected function encodeQuery(string $controller, string $action, array $data = []): string
+    {
+        return $controller.$this->delimiter.$action.($data ? '?'.http_build_query($data) : '');
+    }
+
+    protected function decodeQuery(string $key): array
+    {
+        if (!$query = $this->storage->get($key)) {
+            throw new  \Error(sprintf('Data by key "%s" not found in storage.', $key));
+        }
+
+        $data = explode('?', $query);
+        $parameters = [];
+
+        if (isset($data['1'])) {
+            parse_str($data['1'], $parameters);
+        }
+
+        $handlerData = explode($this->delimiter, $data['0']);
+
+        return [
+            'class' => $handlerData['0'] ?? null,
+            'method' => $handlerData['1'] ?? null,
+            'parameters' => $parameters,
+        ];
     }
 }

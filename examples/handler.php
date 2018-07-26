@@ -45,7 +45,7 @@ while (true) {
                     new class() implements \Pimple\ServiceProviderInterface {
                         public function register(\Pimple\Container $pimple)
                         {
-                            $fileStorage = new \Bbot\Route\Storage\FileStorage(
+                            $fileStorage = new \Bbot\Storage\FileStorage(
                                 new \SplFileObject('../.data/storage.json', 'a+')
                             );
 

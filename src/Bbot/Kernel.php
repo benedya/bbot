@@ -39,7 +39,6 @@ class Kernel
         } else {
             // todo ?
         }
-        // todo handle request
     }
 
     protected function boot()

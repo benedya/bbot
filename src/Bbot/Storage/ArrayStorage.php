@@ -1,8 +1,8 @@
 <?php
 
-namespace Bbot\Route\Storage;
+namespace Bbot\Storage;
 
-class ArrayStorage implements RouterStorage
+class ArrayStorage implements Storage
 {
     protected $storage = [];
 
@@ -14,5 +14,12 @@ class ArrayStorage implements RouterStorage
     public function get(string $key)
     {
         return $this->storage[$key] ?? null;
+    }
+
+    public function remove(string $key)
+    {
+         if (isset($this->storage[$key])) {
+             unset($this->storage[$key]);
+         }
     }
 }

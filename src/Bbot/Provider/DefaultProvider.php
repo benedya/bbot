@@ -20,7 +20,7 @@ class DefaultProvider implements \Pimple\ServiceProviderInterface
 
         $pimple['router'] = function () {
             return new \Bbot\Route\Router(
-                new \Bbot\Route\Storage\ArrayStorage()
+                new \Bbot\Storage\ArrayStorage()
             );
         };
     }
