@@ -17,9 +17,9 @@ class Router
         $this->storage = $storage;
     }
 
-    public function toPostback(string $controller, string $action, array $data = [])
+    public function toPostback(string $controller, string $action, array $parameters = [])
     {
-        $query = $this->encodeQuery($controller, $action, $data);
+        $query = $this->encodeQuery($controller, $action, $parameters);
         $key = md5($query);
 
         $this->storage->set($key, $query);
@@ -42,9 +42,9 @@ class Router
         return $result;
     }
 
-    public function setTxtHandler(string $controller, string $action)
+    public function setTxtHandler(string $controller, string $action, array $parameters = [])
     {
-        $query = $query = $this->encodeQuery($controller, $action);
+        $query = $query = $this->encodeQuery($controller, $action, $parameters);
 
         $this->storage->set('txt_msg_handler', $query);
     }
@@ -63,9 +63,9 @@ class Router
         return $result;
     }
 
-    protected function encodeQuery(string $controller, string $action, array $data = []): string
+    protected function encodeQuery(string $controller, string $action, array $parameters = []): string
     {
-        return $controller.$this->delimiter.$action.($data ? '?'.http_build_query($data) : '');
+        return $controller.$this->delimiter.$action.($parameters ? '?'.http_build_query($parameters) : '');
     }
 
     protected function decodeQuery(string $query): array

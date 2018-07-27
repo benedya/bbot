@@ -47,22 +47,28 @@ class TextController
 
     public function setTextHandler(Request $request, Bot $bot, Router $router)
     {
+        $parameter = 'test';
+
         $bot->sendText(sprintf(
-            'Ok, write some text and "%s::%s" text controller will be called ;)',
+            'Ok, write some text and "%s::%s" will be called (with parameter "%s") ;)',
             get_class($this),
-            'textHandler'
+            'textHandler',
+            $parameter
         ));
 
-        $router->setTxtHandler(TextController::class, 'textHandler');
+        $router->setTxtHandler(TextController::class, 'textHandler', [
+            'parameter' => $parameter,
+        ]);
     }
 
     public function textHandler(Request $request, Bot $bot, Router $router)
     {
         $bot->sendText(sprintf(
-            'Action "%s::%s" got text "%s"',
+            'Action "%s::%s" got text "%s" (parameter "%s")',
             get_class($this),
             'textHandler',
-            $request->getTextMessage()
+            $request->getTextMessage(),
+            $request->get('parameter')
         ));
     }
 }
