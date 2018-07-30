@@ -37,7 +37,10 @@ class Kernel
                 $this->container,
             ]);
         } else {
-            // todo ?
+            throw new \Error(sprintf(
+                'Handler not found for request data %s',
+                json_encode($request->getData(), true)
+            ));
         }
     }
 
@@ -103,6 +106,9 @@ class Kernel
         } else {
             if ($postback = $router->fromPostback($request)) {
                 list($controller, $action) = $processHandlerData($postback);
+            } elseif ($this->container->has('default_controller')) {
+                $controller = $this->container->get('default_controller');
+                $action = 'index';
             }
         }
 

@@ -3,6 +3,7 @@
 namespace Bbot\Provider;
 
 use Bbot\Controller\CommandController;
+use Bbot\Controller\DefaultController;
 use Bbot\Controller\TextController;
 use Pimple\Container;
 
@@ -16,6 +17,10 @@ class DefaultProvider implements \Pimple\ServiceProviderInterface
 
         $pimple['command_controller'] = function () {
             return new CommandController();
+        };
+
+        $pimple['default_controller'] = function () {
+            return new DefaultController();
         };
 
         $pimple['router'] = function () {
