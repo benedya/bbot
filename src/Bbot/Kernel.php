@@ -116,7 +116,7 @@ class Kernel
             }
 
             if (!method_exists($controller, $action)) {
-                throw new \Error(sprintf('Method "%s" not found in class "%s".', $controller, $action));
+                throw new \Error(sprintf('Method "%s" not found in class "%s".', $action, get_class($controller)));
             }
 
             return [$controller, $action];
