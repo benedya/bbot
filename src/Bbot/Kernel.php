@@ -70,6 +70,7 @@ class Kernel
         $router = $this->container->get('router');
         $controller = null;
         $action = null;
+        $specifiedTextHandler = $router->getTxtHandler();
 
         $processHandlerData = function (array $handlerData) use (&$request) {
             $class = $handlerData['class'] ?? '';
@@ -93,7 +94,10 @@ class Kernel
             } else {
                 $controllerKey = 'text_controller';
                 $action = 'index';
-                $handlerData = $router->getTxtHandler();
+
+                if ($specifiedTextHandler) {
+                    $handlerData = $specifiedTextHandler;
+                }
             }
 
             if ($handlerData) {
