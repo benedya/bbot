@@ -12,6 +12,8 @@ interface Bot
 
     public function sendImg($path, $caption = null, $recipient = null);
 
+    public function sendFile($path, $caption = null);
+
     public function sendButtons(array $data, $recipient = null);
 
     public function sendListItems(array $items, $recipient = null);

@@ -112,6 +112,15 @@ class TelegramBot implements Bot
         }
     }
 
+    public function sendFile($path, $caption = null)
+    {
+        if (!is_file($path)) {
+            throw new \Error(sprintf('File "%s" not found.', $path));
+        }
+
+        $this->bot->sendDocument($this->chatId, new \CURLFile($path), $caption);
+    }
+
     public function sendButtons(array $data, $recipient = null)
     {
         $recipient = $recipient ? $recipient : $recipient = $this->chatId;
