@@ -33,8 +33,7 @@ class TelegramFactory extends Factory
     {
         return new \Bbot\Bridge\TelegramBot(
             $this->apiKey,
-            $this->chatId,
-            $this->getLogger()
+            $this->chatId
         );
     }
 }

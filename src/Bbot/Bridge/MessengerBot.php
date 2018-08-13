@@ -4,7 +4,7 @@ namespace Bbot\Bridge;
 
 class MessengerBot implements Bot
 {
-    public function sendText($text, $recipient = null)
+    public function sendText($text)
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',
@@ -13,7 +13,7 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function sendKeyboard($text, array $keyboard, $recipient = null)
+    public function sendKeyboard($text, array $keyboard)
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',
@@ -22,7 +22,7 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function hideKeyboard($text, $recipient = null)
+    public function hideKeyboard($text)
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',
@@ -31,7 +31,7 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function sendImg($path, $caption = null, $recipient = null)
+    public function sendImg($path, $caption = null)
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',
@@ -40,7 +40,7 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function sendButtons(array $data, $recipient = null)
+    public function sendFile($path, $caption = null)
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',
@@ -49,7 +49,16 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function sendListItems(array $items, $recipient = null)
+    public function sendButtons(array $data)
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
+
+    public function sendListItems(array $items)
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',

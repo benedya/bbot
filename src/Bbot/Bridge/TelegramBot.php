@@ -2,7 +2,6 @@
 
 namespace Bbot\Bridge;
 
-use Psr\Log\LoggerInterface;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use TelegramBot\Api\Types\ReplyKeyboardHide;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
@@ -11,33 +10,26 @@ class TelegramBot implements Bot
 {
     /** @var int */
     protected $chatId;
-    /** @var LoggerInterface */
-    protected $logger;
     /** @var \TelegramBot\Api\BotApi */
     protected $bot;
 
-    public function __construct(string $apiKey, int $chatId, LoggerInterface $logger)
+    public function __construct(string $apiKey, int $chatId)
     {
-        $this->logger = $logger;
         $this->chatId = $chatId;
         $this->bot = new \TelegramBot\Api\BotApi($apiKey);
     }
 
-    public function sendText($text, $recipient = null)
+    public function sendText($text)
     {
-        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
-
-        $this->bot->sendMessage($recipient, $text);
+        $this->bot->sendMessage($this->chatId, $text);
     }
 
-    public function sendKeyboard($text, array $keyboard, $recipient = null)
+    public function sendKeyboard($text, array $keyboard)
     {
-        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
-
         $item = new ReplyKeyboardMarkup($keyboard, true, true);
 
         $this->bot->sendMessage(
-            $recipient,
+            $this->chatId,
             $text,
             null,
             false,
@@ -46,14 +38,12 @@ class TelegramBot implements Bot
         );
     }
 
-    public function hideKeyboard($text, $recipient = null)
+    public function hideKeyboard($text)
     {
-        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
-
         $item = new ReplyKeyboardHide(true);
 
         $this->bot->sendMessage(
-            $recipient,
+            $this->chatId,
             $text,
             null,
             false,
@@ -62,9 +52,8 @@ class TelegramBot implements Bot
         );
     }
 
-    public function sendImg($path, $caption = null, $recipient = null)
+    public function sendImg($path, $caption = null)
     {
-        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
         $tmpFile = false;
         // checks if there isset a local file using server variable
         if (!is_file($path) and isset($_SERVER['DOCUMENT_ROOT']) and $_SERVER['DOCUMENT_ROOT']) {
@@ -83,7 +72,7 @@ class TelegramBot implements Bot
                 file_put_contents($tmpFile, file_get_contents($path));
                 $path = $tmpFile;
             } else {
-                throw new \Exception('File "'.$path.'" not found.');
+                throw new \Error('File "'.$path.'" not found.');
             }
         }
 
@@ -100,7 +89,7 @@ class TelegramBot implements Bot
         }
 
         $this->bot->sendPhoto(
-            $recipient,
+            $this->chatId,
             new \CURLFile($path),
             $caption,
             null,
@@ -121,12 +110,10 @@ class TelegramBot implements Bot
         $this->bot->sendDocument($this->chatId, new \CURLFile($path), $caption);
     }
 
-    public function sendButtons(array $data, $recipient = null)
+    public function sendButtons(array $data)
     {
-        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
-
         return $this->bot->sendMessage(
-            $recipient,
+            $this->chatId,
             $data['caption'],
             null,
             false,
@@ -166,10 +153,8 @@ class TelegramBot implements Bot
         ];
     }
 
-    public function sendListItems(array $items, $recipient = null)
+    public function sendListItems(array $items)
     {
-        $recipient = $recipient ? $recipient : $recipient = $this->chatId;
-
         foreach ($items as $item) {
             if ($item['image']) {
                 $this->sendImg($item['image'], [
@@ -178,7 +163,7 @@ class TelegramBot implements Bot
                 ]);
             } else {
                 $this->bot->sendMessage(
-                    $recipient,
+                    $this->chatId,
                     $item['text'],
                     isset($item['parseMode']) ? $item['parseMode'] : false,
                     false,
