@@ -110,6 +110,13 @@ class Kernel
         } else {
             if ($postback = $router->fromPostback($request)) {
                 list($controller, $action) = $processHandlerData($postback);
+
+                if ($request->get('_removeable')) {
+                    $this->bot->deleteMessage([
+                        'chatId' => $request->getChatId(),
+                        'messageId' => $request->getMessageId(),
+                    ]);
+                }
             } elseif ($this->container->has('default_controller')) {
                 $controller = $this->container->get('default_controller');
                 $action = 'index';

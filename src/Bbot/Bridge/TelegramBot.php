@@ -178,4 +178,13 @@ class TelegramBot implements Bot
     {
         return $this->chatId;
     }
+
+    public function deleteMessage(array $data)
+    {
+        if (!isset($data['chatId']) or !isset($data['messageId'])) {
+            throw new \Error(sprintf('"chatId" and "messageId" are required.'));
+        }
+
+        $this->bot->deleteMessage($data['chatId'], $data['messageId']);
+    }
 }

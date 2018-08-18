@@ -23,4 +23,6 @@ interface Bot
     public function buildItemWithButtons(array $data, array $buttons);
 
     public function getTarget();
+
+    public function deleteMessage(array $data);
 }

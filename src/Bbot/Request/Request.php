@@ -16,6 +16,10 @@ interface Request
 
     public function getPostback();
 
+    public function getChatId(): string;
+
+    public function getMessageId(): string;
+
     public static function fromArray(array $data): Request;
 
     public function getPlatform(): string;

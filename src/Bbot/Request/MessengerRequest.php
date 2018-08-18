@@ -58,6 +58,24 @@ class MessengerRequest implements Request
         ));
     }
 
+    public function getMessageId(): string
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
+
+    public function getChatId(): string
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
+
     public static function fromArray(array $data): Request
     {
         throw new \Error(sprintf(

@@ -93,4 +93,13 @@ class MessengerBot implements Bot
             __METHOD__
         ));
     }
+
+    public function deleteMessage(array $data)
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
 }

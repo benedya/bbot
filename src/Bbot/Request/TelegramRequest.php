@@ -46,6 +46,36 @@ class TelegramRequest implements Request
         return $this->data['callback_query']['data'] ?? null;
     }
 
+    public function getMessageId(): string
+    {
+        if ($this->getPostback()) {
+            $messageId = $this->data['callback_query']['message']['message_id'] ?? '';
+        } else {
+            $messageId = $this->data['message']['message_id'] ?? '';
+        }
+
+        if (!$messageId) {
+            throw new \Error(sprintf('Cant get id of the message from data "%s"', json_encode($this->data)));
+        }
+
+        return $messageId;
+    }
+
+    public function getChatId(): string
+    {
+        if ($this->getPostback()) {
+            $chatId = $this->data['callback_query']['message']['chat']['id'] ?? '';
+        } else {
+            $chatId = $this->data['message']['chat']['id'] ?? '';
+        }
+
+        if (!$chatId) {
+            throw new \Error(sprintf('Cant get id of the chat from data "%s"', json_encode($this->data)));
+        }
+
+        return $chatId;
+    }
+
     public static function fromArray(array $data): Request
     {
         $response = new static($data);

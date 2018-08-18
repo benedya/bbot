@@ -20,6 +20,7 @@ class TextController
                     'title' => 'Yes',
                     'url' => $router->toPostback(TextController::class, 'button', [
                         'action' => 'confirm',
+                        '_removeable' => true,
                     ]),
                 ],
             ],
