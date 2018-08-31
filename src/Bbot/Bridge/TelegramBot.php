@@ -26,7 +26,7 @@ class TelegramBot implements Bot
 
     public function sendKeyboard($text, array $keyboard)
     {
-        $item = new ReplyKeyboardMarkup($keyboard, true, true);
+        $item = new ReplyKeyboardMarkup($keyboard, false, true);
 
         $this->bot->sendMessage(
             $this->chatId,
