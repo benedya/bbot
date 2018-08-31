@@ -118,13 +118,13 @@ class TelegramBot implements Bot
             null,
             false,
             null,
-            $this->buildButtons($data['buttons'])
+            $this->buildButtons($data['buttons'], $data['countInRow'] ?? 1)
         );
     }
 
-    public function buildButtons(array $data)
+    public function buildButtons(array $data, int $countInRow = 1)
     {
-        $data = array_chunk($data, 3);
+        $data = array_chunk($data, $countInRow);
         $buttons = [];
 
         foreach ($data as $line) {

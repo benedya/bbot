@@ -18,7 +18,7 @@ interface Bot
 
     public function sendListItems(array $items);
 
-    public function buildButtons(array $data);
+    public function buildButtons(array $data, int $countInRow = 1);
 
     public function buildItemWithButtons(array $data, array $buttons);
 

@@ -67,7 +67,7 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function buildButtons(array $data)
+    public function buildButtons(array $data, int $countInRow = 1)
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',
