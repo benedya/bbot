@@ -21,7 +21,38 @@ class TelegramBot implements Bot
 
     public function sendText($text)
     {
-        $this->bot->sendMessage($this->chatId, $text);
+        $splitIntoChunks = function (string $msg) {
+            $result = [];
+            $maxCharacters = 4050;
+
+            if (mb_strlen($msg) > $maxCharacters) {
+                $arr = explode('.', $msg);
+                $arrContains = [];
+
+                foreach ($arr as $line) {
+                    if (mb_strlen(join('.', array_merge($arrContains, [$line]))) > $maxCharacters) {
+                        $result[] = join('.', $arrContains);
+                        $arrContains = [$line];
+                    } else {
+                        $arrContains[] = $line;
+                    }
+                }
+
+                if ($arrContains) {
+                    $result[] = join('.', $arrContains);
+                }
+            } else {
+                $result = [$msg];
+            }
+
+            return $result;
+        };
+
+        $chunks = $splitIntoChunks($text);
+
+        foreach ($chunks as $chunk) {
+            $this->bot->sendMessage($this->chatId, $chunk, 'markdown');
+        }
     }
 
     public function sendKeyboard($text, array $keyboard)
@@ -31,7 +62,7 @@ class TelegramBot implements Bot
         $this->bot->sendMessage(
             $this->chatId,
             $text,
-            null,
+            'markdown',
             false,
             null,
             $item
@@ -45,7 +76,7 @@ class TelegramBot implements Bot
         $this->bot->sendMessage(
             $this->chatId,
             $text,
-            null,
+            'markdown',
             false,
             null,
             $item
@@ -115,7 +146,7 @@ class TelegramBot implements Bot
         return $this->bot->sendMessage(
             $this->chatId,
             $data['caption'],
-            null,
+            'markdown',
             false,
             null,
             $this->buildButtons($data['buttons'], $data['countInRow'] ?? 1)
@@ -165,7 +196,7 @@ class TelegramBot implements Bot
                 $this->bot->sendMessage(
                     $this->chatId,
                     $item['text'],
-                    isset($item['parseMode']) ? $item['parseMode'] : false,
+                    isset($item['parseMode']) ? $item['parseMode'] : 'markdown',
                     false,
                     null,
                     $item['buttons']
