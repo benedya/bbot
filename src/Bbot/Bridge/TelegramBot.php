@@ -19,7 +19,7 @@ class TelegramBot implements Bot
         $this->bot = new \TelegramBot\Api\BotApi($apiKey);
     }
 
-    public function sendText($text)
+    public function sendText($text, array $options = [])
     {
         $splitIntoChunks = function (string $msg) {
             $result = [];
@@ -51,32 +51,32 @@ class TelegramBot implements Bot
         $chunks = $splitIntoChunks($text);
 
         foreach ($chunks as $chunk) {
-            $this->bot->sendMessage($this->chatId, $chunk, 'markdown');
+            $this->bot->sendMessage($this->chatId, $chunk, $options['parseMode'] ?? null);
         }
     }
 
-    public function sendKeyboard($text, array $keyboard)
+    public function sendKeyboard($text, array $keyboard, array $options = [])
     {
         $item = new ReplyKeyboardMarkup($keyboard, false, true);
 
         $this->bot->sendMessage(
             $this->chatId,
             $text,
-            'markdown',
+            $options['parseMode'] ?? null,
             false,
             null,
             $item
         );
     }
 
-    public function hideKeyboard($text)
+    public function hideKeyboard($text, array $options = [])
     {
         $item = new ReplyKeyboardHide(true);
 
         $this->bot->sendMessage(
             $this->chatId,
             $text,
-            'markdown',
+            $options['parseMode'] ?? null,
             false,
             null,
             $item
@@ -141,12 +141,12 @@ class TelegramBot implements Bot
         $this->bot->sendDocument($this->chatId, new \CURLFile($path), $caption);
     }
 
-    public function sendButtons(array $data)
+    public function sendButtons(array $data, array $options = [])
     {
         return $this->bot->sendMessage(
             $this->chatId,
             $data['caption'],
-            'markdown',
+            $options['parseMode'] ?? null,
             false,
             null,
             $this->buildButtons($data['buttons'], $data['countInRow'] ?? 1)
@@ -196,7 +196,7 @@ class TelegramBot implements Bot
                 $this->bot->sendMessage(
                     $this->chatId,
                     $item['text'],
-                    isset($item['parseMode']) ? $item['parseMode'] : 'markdown',
+                    $item['parseMode'] ?? null,
                     false,
                     null,
                     $item['buttons']

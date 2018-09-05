@@ -4,7 +4,7 @@ namespace Bbot\Bridge;
 
 class MessengerBot implements Bot
 {
-    public function sendText($text)
+    public function sendText($text, array $options = [])
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',
@@ -13,7 +13,7 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function sendKeyboard($text, array $keyboard)
+    public function sendKeyboard($text, array $keyboard, array $options = [])
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',
@@ -22,7 +22,7 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function hideKeyboard($text)
+    public function hideKeyboard($text, array $options = [])
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',
@@ -49,7 +49,7 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function sendButtons(array $data)
+    public function sendButtons(array $data, array $options = [])
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',

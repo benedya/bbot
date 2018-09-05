@@ -10,10 +10,9 @@ class TextController
 {
     public function index(Request $request, Bot $bot, Router $router)
     {
-        $bot->sendText(sprintf('Hey from "%s" controller ;)', get_class($this)));
-
+        $bot->sendText(sprintf('Hey from "`%s`" controller ;)', get_class($this)), ['parseMode' => 'markdown']);
         $bot->sendButtons([
-            'caption' => 'Do you to test this button?',
+            'caption' => 'Do you to <b>test</b> this <i>button</i>?',
             'buttons' => [
                 [
                     'type' => 'postback',
@@ -24,7 +23,7 @@ class TextController
                     ]),
                 ],
             ],
-        ]);
+        ], ['parseMode' => 'html']);
     }
 
     public function button(Request $request, Bot $bot, Router $router)
