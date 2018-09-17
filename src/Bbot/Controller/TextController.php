@@ -8,7 +8,7 @@ use Bbot\Route\Router;
 
 class TextController
 {
-    public function index(Request $request, Bot $bot, Router $router)
+    public function defaultAction(Request $request, Bot $bot, Router $router)
     {
         $bot->sendText(sprintf('Hey from "`%s`" controller ;)', get_class($this)), ['parseMode' => 'markdown']);
         $bot->sendButtons([

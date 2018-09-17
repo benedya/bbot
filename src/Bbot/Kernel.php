@@ -69,7 +69,8 @@ class Kernel
         /** @var \Bbot\Route\Router $router */
         $router = $this->container->get('router');
         $controller = null;
-        $action = null;
+        $defaultAction = 'defaultAction';
+        $action = $defaultAction;
         $specifiedTextHandler = $router->getTxtHandler();
 
         $processHandlerData = function (array $handlerData) use (&$request) {
@@ -93,7 +94,6 @@ class Kernel
                 $action = explode(' ', substr($msg, 1))['0'];
             } else {
                 $controllerKey = 'text_controller';
-                $action = 'index';
 
                 if ($specifiedTextHandler) {
                     $handlerData = $specifiedTextHandler;
@@ -119,7 +119,6 @@ class Kernel
                 }
             } elseif ($this->container->has('default_controller')) {
                 $controller = $this->container->get('default_controller');
-                $action = 'index';
             }
         }
 
@@ -133,7 +132,17 @@ class Kernel
             }
 
             if (!method_exists($controller, $action)) {
-                throw new \Error(sprintf('Method "%s" not found in class "%s".', $action, get_class($controller)));
+                if ($request->isText() or $request->isCommand()) {
+                    $action = $defaultAction;
+                }
+
+                if (!method_exists($controller, $action)) {
+                    throw new \Error(sprintf(
+                        'Method "%s" not found in class "%s".',
+                        $action,
+                        get_class($controller)
+                    ));
+                }
             }
 
             return [$controller, $action];
