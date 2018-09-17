@@ -1,27 +1,26 @@
 ## Simple bot-framework
 
-The goal of the framework is to separate business logic from different bot's platforms. 
-
-Supported platforms: `telegram`
+The goal of the framework is to make development telegram-bot easier. 
+Here you will find ready-for-use architecture where you have to put only your logic and enjoy working telegram-bot. 
 
 Using it you can:
 - handling text-requests
-- set an action for a button click
-- ...
+- handling commands
+- set an action for a button click (postback-request)
+- set a certain action for text-request
 
 
-Example handling telegram requests
+Example handling telegram request
 ```php
 <?php
 
 include "./vendor/autoload.php";
 
 $chatId = '<chat-id>';
-$requestItem = [];
+$requestItem = ['<request-item>'];
 
 (new \Bbot\Builder\TelegramFactory($apiKey, $chatId))
     ->buildKernel()
-    ->setTextController(\Bbot\Controller\TextController::class)
     ->handle(\Bbot\Request\TelegramRequest::fromArray($requestItem))
 ;
 ```
