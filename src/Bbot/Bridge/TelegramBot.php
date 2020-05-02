@@ -130,7 +130,7 @@ class TelegramBot implements Bot
             $buttons = $data['buttons'];
             // if buttons were not built yet - build it now
             if (is_array($buttons)) {
-                $buttons = $this->buildButtons($buttons);
+                $buttons = $this->buildButtons($buttons, $data['countInRow'] ?? 1);
             }
         }
 
