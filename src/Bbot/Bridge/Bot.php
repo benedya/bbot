@@ -6,6 +6,8 @@ interface Bot
 {
     public function sendText($text, array $options = []);
 
+    public function sendFlashMessage(string $text, array $options = []);
+
     public function sendKeyboard($text, array $keyboard, array $options = []);
 
     public function hideKeyboard($text, array $options = []);

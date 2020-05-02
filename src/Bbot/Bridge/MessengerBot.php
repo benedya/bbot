@@ -13,6 +13,15 @@ class MessengerBot implements Bot
         ));
     }
 
+    public function sendFlashMessage(string $text, array $options = [])
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
+
     public function sendKeyboard($text, array $keyboard, array $options = [])
     {
         throw new \Error(sprintf(

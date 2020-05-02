@@ -55,6 +55,21 @@ class TelegramBot implements Bot
         }
     }
 
+    public function sendFlashMessage(string $text, array $options = [])
+    {
+        $callbackQueryId = $options['callbackQueryId'] ?? null;
+
+        if (!$callbackQueryId) {
+            throw new \InvalidArgumentException('Field "callbackQueryId" is required.');
+        }
+
+        $this->bot->answerCallbackQuery(
+            $callbackQueryId,
+            $text,
+            $options['showAlert'] ?? false
+        );
+    }
+
     public function sendKeyboard($text, array $keyboard, array $options = [])
     {
         $item = new ReplyKeyboardMarkup($keyboard, false, true);
