@@ -158,14 +158,24 @@ class TelegramBot implements Bot
 
     public function sendButtons(array $data, array $options = [])
     {
-        return $this->bot->sendMessage(
-            $this->chatId,
-            $data['caption'],
-            $options['parseMode'] ?? null,
-            false,
-            null,
-            $this->buildButtons($data['buttons'], $data['countInRow'] ?? 1)
-        );
+        $editMessageId = $data['editMessageId'] ?? null;
+
+        if ($editMessageId) {
+            return $this->bot->editMessageReplyMarkup(
+                $this->chatId,
+                $editMessageId,
+                $this->buildButtons($data['buttons'], $data['countInRow'] ?? 1)
+            );
+        } else {
+            return $this->bot->sendMessage(
+                $this->chatId,
+                $data['caption'],
+                $options['parseMode'] ?? null,
+                false,
+                $options['replyToMessageId'] ?? null,
+                $this->buildButtons($data['buttons'], $data['countInRow'] ?? 1)
+            );
+        }
     }
 
     public function buildButtons(array $data, int $countInRow = 1)
