@@ -9,9 +9,9 @@ use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 class TelegramBot implements Bot
 {
     /** @var int */
-    protected $chatId;
+    private $chatId;
     /** @var \TelegramBot\Api\BotApi */
-    protected $bot;
+    private $bot;
 
     public function __construct(string $apiKey, int $chatId)
     {
@@ -245,5 +245,10 @@ class TelegramBot implements Bot
         }
 
         $this->bot->deleteMessage($data['chatId'], $data['messageId']);
+    }
+
+    public function setBot(\TelegramBot\Api\BotApi $bot): void
+    {
+        $this->bot = $bot;
     }
 }
