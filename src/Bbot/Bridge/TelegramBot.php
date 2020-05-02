@@ -155,7 +155,10 @@ class TelegramBot implements Bot
 
     public function buildButtons(array $data, int $countInRow = 1)
     {
-        $data = array_chunk($data, $countInRow);
+        if ($countInRow !== -1) {
+            $data = array_chunk($data, $countInRow);
+        }
+        
         $buttons = [];
 
         foreach ($data as $line) {
