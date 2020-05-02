@@ -14,11 +14,11 @@
       "email": "benedya@gmail.com"
     }
   ],
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "require": {
+    "php": "^7.4.0",
     "psr/log": "^1.0",
     "pimax/fb-messenger-php": "1.0.*",
-    "php": ">=7.1",
     "telegram-bot/api": "v2.3.*",
     "psr/container": "@stable",
     "pimple/pimple": "^3.0"
@@ -30,6 +30,6 @@
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.11",
-    "phpunit/phpunit": "~5.7"
+    "phpunit/phpunit": "^9.1"
   }
 }
