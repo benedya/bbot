@@ -122,6 +122,7 @@ class TelegramBot implements Bot
             }
         }
 
+        $data = [];
         $buttons = [];
         // checks if there are buttons
         if (is_array($caption)) {
@@ -138,8 +139,10 @@ class TelegramBot implements Bot
             $this->chatId,
             new \CURLFile($path),
             $caption,
-            null,
-            $buttons
+            $data['replyToMessageId'] ?? false,
+            $buttons,
+            $data['disableNotification'] ?? false,
+            $data['parseMode'] ?? null
         );
 
         if ($tmpFile) {
