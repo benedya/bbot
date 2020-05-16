@@ -299,6 +299,15 @@ class TelegramBot implements Bot
 
         foreach ($items as $item) {
             $buttons = $item['buttons'] ?? null;
+            $inputMessageContent = null;
+
+            if (isset($item['extendedDescription'])) {
+                $inputMessageContent =  new Text(
+                    $item['extendedDescription'],
+                    $item['parseMode'] ?? null,
+                    $item['disableWebPagePreview'] ?? null,
+                );
+            }
 
             $result[] = new Article(
                 $item['id'],
@@ -307,7 +316,7 @@ class TelegramBot implements Bot
                 $item['thumbUrl'] ?? null,
                 $item['thumbWidth'] ?? null,
                 $item['thumbHeight'] ?? null,
-                $item['extendedDescription'] ? new Text($item['extendedDescription']) : null,
+                $inputMessageContent,
                 $buttons ? $this->buildButtons($buttons, $item['countInRow'] ?? 1) : null,
             );
         }
