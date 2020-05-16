@@ -3,6 +3,8 @@
 namespace Bbot\Bridge;
 
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
+use TelegramBot\Api\Types\Inline\InputMessageContent\Text;
+use TelegramBot\Api\Types\Inline\QueryResult\Article;
 use TelegramBot\Api\Types\ReplyKeyboardHide;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
@@ -253,5 +255,51 @@ class TelegramBot implements Bot
     public function setBot(\TelegramBot\Api\BotApi $bot): void
     {
         $this->bot = $bot;
+    }
+
+    public function sendQueryResults(array $data, array $options = [])
+    {
+        return $this->bot->answerInlineQuery(
+            $this->chatId,
+            $this->buildQueryResults($data, $options['type'] ?? 'article'),
+            $options['cacheTime'] ?? 300,
+            $options['isPersonal'] ?? false,
+            $options['nextOffset'] ?? '',
+            $options['switchPmText'] ?? '',
+            $options['switchPmParameter'] ?? '',
+        );
+    }
+
+    private function buildQueryResults(array $items, string $type): array
+    {
+        switch ($type) {
+            case 'article':
+                return $this->buildArticleQueryResults($items);
+                break;
+            default:
+                throw new \RuntimeException(sprintf('Unsupported type "%s"', $type));
+        }
+    }
+
+    private function buildArticleQueryResults(array $items)
+    {
+        $result = [];
+
+        foreach ($items as $item) {
+            $buttons = $item['buttons'] ?? null;
+
+            $result[] = new Article(
+                $item['id'],
+                $item['title'],
+                $item['description'],
+                $item['thumbUrl'] ?? null,
+                $item['thumbWidth'] ?? null,
+                $item['thumbHeight'] ?? null,
+                $item['extendedDescription'] ? new Text($item['extendedDescription']) : null,
+                $buttons ? $this->buildButtons($buttons, $item['countInRow'] ?? 1) : null,
+            );
+        }
+
+        return $result;
     }
 }

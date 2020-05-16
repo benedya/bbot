@@ -8,6 +8,8 @@ interface Request
 
     public function isCommand(): bool;
 
+    public function isInlineQuery(): bool;
+
     public function get(string $key);
 
     public function getTextMessage(): string;

@@ -27,4 +27,6 @@ interface Bot
     public function getTarget();
 
     public function deleteMessage(array $data);
+
+    public function sendQueryResults(array $data, array $options = []);
 }

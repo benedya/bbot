@@ -111,4 +111,13 @@ class MessengerBot implements Bot
             __METHOD__
         ));
     }
+
+    public function sendQueryResults(array $data, array $options = [])
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
 }

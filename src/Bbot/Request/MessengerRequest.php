@@ -4,6 +4,15 @@ namespace Bbot\Request;
 
 class MessengerRequest implements Request
 {
+    public function isInlineQuery(): bool
+    {
+        throw new \Error(sprintf(
+            'Method "%s::%s" is not implemented yet.',
+            get_class($this),
+            __METHOD__
+        ));
+    }
+
     public function isText(): bool
     {
         throw new \Error(sprintf(

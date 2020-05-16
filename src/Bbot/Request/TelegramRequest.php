@@ -14,6 +14,11 @@ class TelegramRequest implements Request
         $this->data = $data;
     }
 
+    public function isInlineQuery(): bool
+    {
+        return isset($this->data['inline_query']) ? true : false;
+    }
+
     public function isText(): bool
     {
         return isset($this->data['message']['text']) ? true : false;
@@ -64,7 +69,9 @@ class TelegramRequest implements Request
     public function getChatId(): string
     {
         if ($this->getPostback()) {
-            $chatId = $this->data['callback_query']['message']['chat']['id'] ?? '';
+            $chatId = $this->data['callback_query']['from']['id'] ?? '';
+        } elseif ($this->isInlineQuery()) {
+            $chatId = $this->data['inline_query']['id'] ?? '';
         } else {
             $chatId = $this->data['message']['chat']['id'] ?? '';
         }
