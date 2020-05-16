@@ -195,8 +195,20 @@ class TelegramBot implements Bot
             $listBtns = [];
 
             foreach ($line as $btn) {
-                $type = ('postback' === $btn['type']) ? 'callback_data' : 'url';
-                $listBtns[] = ['text' => $btn['title'], $type => $btn['url']];
+                $btnItem = [
+                    'text' => $btn['title'],
+                ];
+
+                if (isset($btn['type'])) {
+                    $type = ('postback' === $btn['type']) ? 'callback_data' : 'url';
+                    $btnItem[$type] = $btn['url'];
+                }
+
+                if (isset($btn['switch_inline_query_current_chat'])) {
+                    $btnItem['switch_inline_query_current_chat'] = $btn['switch_inline_query_current_chat'];
+                }
+
+                $listBtns[] = $btnItem;
             }
 
             $buttons[] = $listBtns;
