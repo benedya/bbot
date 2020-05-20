@@ -72,6 +72,8 @@ class TelegramRequest implements Request
             $chatId = $this->data['callback_query']['from']['id'] ?? '';
         } elseif ($this->isInlineQuery()) {
             $chatId = $this->data['inline_query']['id'] ?? '';
+        } elseif (isset($this->data['pre_checkout_query'])) {
+            $chatId = $this->data['pre_checkout_query']['id'];
         } else {
             $chatId = $this->data['message']['chat']['id'] ?? '';
         }
