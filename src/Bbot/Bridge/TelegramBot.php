@@ -208,6 +208,10 @@ class TelegramBot implements Bot
                     $btnItem['switch_inline_query_current_chat'] = $btn['switch_inline_query_current_chat'];
                 }
 
+                if (isset($btn['options'])) {
+                    $btnItem = array_merge($btnItem, $btn['options']);
+                }
+
                 $listBtns[] = $btnItem;
             }
 
