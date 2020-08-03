@@ -25,13 +25,12 @@ class ViberBot implements Bot
 
     public function sendText($text, array $options = [])
     {
-        $botSender = new Sender([
-            'name' => $this->senderName,
-        ]);
+        // html is not supported
+        $text = strip_tags($text);
 
         $this->client->sendMessage(
             (new \Viber\Api\Message\Text())
-                ->setSender($botSender)
+                ->setSender($this->getSender())
                 ->setReceiver($this->senderId)
                 ->setText($text)
         );
@@ -46,13 +45,40 @@ class ViberBot implements Bot
         ));
     }
 
+    private function buildKeyboard(array $items, int $columns = 6): array
+    {
+        $buttons = [];
+        $maxColumns = 6;
+
+        foreach ($items as $k => $button) {
+            if (is_array($button)) {
+                $buttons = array_merge(
+                    $buttons,
+                    $this->buildKeyboard($button, (int)($maxColumns / count($button))),
+                );
+                continue;
+            }
+
+            $buttons[] = (new \Viber\Api\Keyboard\Button())
+                    ->setColumns($columns)
+                    ->setActionBody($button)
+                    ->setText($button);
+        }
+
+        return $buttons;
+    }
+
     public function sendKeyboard($text, array $keyboard, array $options = [])
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        $this->client->sendMessage(
+            (new \Viber\Api\Message\Text())
+                ->setSender($this->getSender())
+                ->setReceiver($this->senderId)
+                ->setText($text)
+                ->setKeyboard(
+                    (new \Viber\Api\Keyboard())->setButtons($this->buildKeyboard($keyboard))
+                )
+        );
     }
 
     public function hideKeyboard($text, array $options = [])
@@ -143,5 +169,12 @@ class ViberBot implements Bot
             get_class($this),
             __METHOD__
         ));
+    }
+
+    private function getSender(): Sender
+    {
+        return new Sender([
+            'name' => $this->senderName,
+        ]);
     }
 }
