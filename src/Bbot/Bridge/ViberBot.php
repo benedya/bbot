@@ -110,11 +110,21 @@ class ViberBot implements Bot
 
     public function sendButtons(array $data, array $options = [])
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        $captionArea = (new \Viber\Api\Keyboard\Button())
+            ->setRows(2)
+            ->setActionType('none')
+            ->setText($data['caption'])
+            ->setBgColor('#ffffff');
+
+        $buttons = $this->buildButtons($data['buttons']);
+
+        $this->client->sendMessage(
+            (new \Viber\Api\Message\CarouselContent())
+                ->setSender($this->getSender())
+                ->setReceiver($this->senderId)
+                ->setButtonsGroupRows(count($buttons) + 2)
+                ->setButtons(array_merge([$captionArea], $buttons))
+        );
     }
 
     public function sendListItems(array $items)
@@ -128,11 +138,32 @@ class ViberBot implements Bot
 
     public function buildButtons(array $data, int $countInRow = 1)
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        if ($countInRow !== -1) {
+            $data = array_chunk($data, $countInRow);
+        }
+
+        $buttons = [];
+        $maxButtonsInLine = 6;
+
+        foreach ($data as $line) {
+            $countButtons = count($line);
+
+            foreach ($line as $btn) {
+                $buttons [] = (new \Viber\Api\Keyboard\Button())
+                    ->setColumns((int)($maxButtonsInLine / $countButtons))
+                    ->setActionType($btn['type'] ?? 'reply')
+                    ->setActionBody('https://www.google.com')
+                    ->setText(sprintf(
+                        '<span style="color: %s;">%s</span>',
+                        $btn['text_color'] ?? '#ffffff',
+                        $btn['title']
+                    ))
+                    ->setBgColor($btn['bg_color'] ?? '#7C69E9')
+                    ;
+            }
+        }
+
+        return $buttons;
     }
 
     public function buildItemWithButtons(array $data, array $buttons)
