@@ -149,10 +149,9 @@ class ViberBot implements Bot
             $countButtons = count($line);
 
             foreach ($line as $btn) {
-                $buttons [] = (new \Viber\Api\Keyboard\Button())
+                $button = (new \Viber\Api\Keyboard\Button())
                     ->setColumns((int)($maxButtonsInLine / $countButtons))
                     ->setActionType($btn['type'] ?? 'reply')
-                    ->setActionBody('https://www.google.com')
                     ->setText(sprintf(
                         '<span style="color: %s;">%s</span>',
                         $btn['text_color'] ?? '#ffffff',
@@ -160,6 +159,15 @@ class ViberBot implements Bot
                     ))
                     ->setBgColor($btn['bg_color'] ?? '#7C69E9')
                     ;
+
+                if (isset($btn['type']) && $btn['type'] === 'postback') {
+                    $button
+                        ->setActionType('reply')
+                        ->setActionBody($btn['url'])
+                        ->setSilent(true);
+                }
+
+                $buttons[] = $button;
             }
         }
 

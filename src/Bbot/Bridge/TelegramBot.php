@@ -199,13 +199,11 @@ class TelegramBot implements Bot
                     'text' => $btn['title'],
                 ];
 
-                if (isset($btn['type'])) {
-                    $type = ('postback' === $btn['type']) ? 'callback_data' : 'url';
-                    $btnItem[$type] = $btn['url'];
-                }
-
                 if (isset($btn['switch_inline_query_current_chat'])) {
                     $btnItem['switch_inline_query_current_chat'] = $btn['switch_inline_query_current_chat'];
+                } elseif (isset($btn['type'])) {
+                    $type = ('postback' === $btn['type']) ? 'callback_data' : 'url';
+                    $btnItem[$type] = $btn['url'];
                 }
 
                 if (isset($btn['options'])) {

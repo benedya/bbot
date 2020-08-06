@@ -24,6 +24,10 @@ class ViberRequest implements Request
 
     public function isText(): bool
     {
+        if (isset($this->data['silent']) && $this->data['silent']) {
+            return false;
+        }
+
         return $this->data['message']['type'] === 'text';
     }
 
@@ -49,11 +53,7 @@ class ViberRequest implements Request
 
     public function getPostback()
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        return $this->data['message']['text'] ?? null;
     }
 
     public function getMessageId(): string
