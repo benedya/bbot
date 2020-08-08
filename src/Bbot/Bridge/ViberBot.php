@@ -2,6 +2,8 @@
 
 namespace Bbot\Bridge;
 
+use Bbot\DTO\ButtonDTO;
+use Bbot\DTO\ItemWithButtonsDTO;
 use Viber\Client;
 use Viber\Api\Sender;
 
@@ -110,21 +112,87 @@ class ViberBot implements Bot
 
     public function sendButtons(array $data, array $options = [])
     {
-        $captionArea = (new \Viber\Api\Keyboard\Button())
-            ->setRows(2)
-            ->setActionType('none')
-            ->setText($data['caption'])
-            ->setBgColor('#ffffff');
+        $viewType = $options['view_type'] ?? '';
+        $buttons = $data['buttons'];
 
-        $buttons = $this->buildButtons($data['buttons']);
+        if ($viewType === self::VIEW_TYPE_CAROUSEL) {
+            $readyToSendButtons = [];
+            $captionRows = 2;
+            $maxAllowedRows = 7;
+            $maxAllowedColumns = 6;
 
-        $this->client->sendMessage(
-            (new \Viber\Api\Message\CarouselContent())
-                ->setSender($this->getSender())
-                ->setReceiver($this->senderId)
-                ->setButtonsGroupRows(count($buttons) + 2)
-                ->setButtons(array_merge([$captionArea], $buttons))
-        );
+            foreach ($buttons as $itemWithButtons) {
+                if (!$itemWithButtons instanceof ItemWithButtonsDTO) {
+                    throw new \UnexpectedValueException('Unexpected button type.');
+                }
+
+                $countButtons = count($itemWithButtons->getButtons());
+
+                if ($countButtons + $captionRows > $maxAllowedRows) {
+                    throw new \Exception('Reached max allowed rows.');
+                }
+
+                if ($itemWithButtons->getImageUrl()) {
+                    $readyToSendButtons[] = (new \Viber\Api\Keyboard\Button())
+                        ->setRows($maxAllowedRows - $countButtons - $captionRows)
+                        ->setActionType('none')
+                        ->setImage($itemWithButtons->getImageUrl())
+                    ;
+                }
+
+                $text = $itemWithButtons->getParameter('viber_name') ?? $itemWithButtons->getName();
+
+                $readyToSendButtons[] = (new \Viber\Api\Keyboard\Button())
+                    ->setRows($itemWithButtons->getImageUrl() ? $captionRows: $maxAllowedRows - $countButtons)
+                    ->setActionType('none')
+                    ->setTextHAlign('left')
+//                    ->setTextHAlign('bottom')
+                    ->setText($text)
+                    ->setTextSize('medium')
+                    ->setBgColor('#ffffff')
+                ;
+
+                $readyToSendButtons = array_merge(
+                    $readyToSendButtons,
+                    $this->buildButtons(
+                        $itemWithButtons->getButtons()
+                    )
+                );
+            }
+
+//            throw new \Exception(print_r($readyToSendButtons, true));
+
+            $this->client->sendMessage(
+                (new \Viber\Api\Message\CarouselContent())
+                    ->setSender($this->getSender())
+                    ->setReceiver($this->senderId)
+                    ->setButtonsGroupColumns($maxAllowedColumns)
+                    ->setButtonsGroupRows($maxAllowedRows)
+                    ->setButtons($readyToSendButtons)
+            );
+        } else {
+            $captionArea = [];
+
+            if (isset($data['caption'])) {
+                $captionArea = (new \Viber\Api\Keyboard\Button())
+                    ->setRows(2)
+                    ->setActionType('none')
+                    ->setText($data['caption'])
+                    ->setBgColor('#ffffff');
+            }
+
+            $buttons = $this->buildButtons($buttons);
+
+            $this->client->sendMessage(
+                (new \Viber\Api\Message\CarouselContent())
+                    ->setSender($this->getSender())
+                    ->setReceiver($this->senderId)
+                    ->setButtonsGroupRows(count($buttons) + 2)
+                    ->setButtons(
+                        $captionArea ? array_merge([$captionArea], $buttons) : $buttons
+                    )
+            );
+        }
     }
 
     public function sendListItems(array $items)
@@ -136,7 +204,7 @@ class ViberBot implements Bot
         ));
     }
 
-    public function buildButtons(array $data, int $countInRow = 1)
+    public function buildButtons(array $data, int $countInRow = 1, int $availableRows = null)
     {
         if ($countInRow !== -1) {
             $data = array_chunk($data, $countInRow);
@@ -149,21 +217,38 @@ class ViberBot implements Bot
             $countButtons = count($line);
 
             foreach ($line as $btn) {
+                if ($btn instanceof ButtonDTO) {
+                    $actionType = $btn->getType();
+                    $text = $btn->getName();
+                    $isPostBack = $btn->isPostBackType();
+                    $postBackData = $btn->getPostBackData();
+                } else {
+                    $actionType = $btn['type'] ?? 'reply';
+                    $text = $btn['title'];
+                    $isPostBack = $actionType === 'postback';
+                    $postBackData = $btn['url'];
+                }
+
                 $button = (new \Viber\Api\Keyboard\Button())
                     ->setColumns((int)($maxButtonsInLine / $countButtons))
-                    ->setActionType($btn['type'] ?? 'reply')
+
+                    ->setActionType($actionType)
                     ->setText(sprintf(
                         '<span style="color: %s;">%s</span>',
-                        $btn['text_color'] ?? '#ffffff',
-                        $btn['title']
+                        '#ffffff',
+                        $text
                     ))
-                    ->setBgColor($btn['bg_color'] ?? '#7C69E9')
+                    ->setBgColor('#7C69E9')
                     ;
 
-                if (isset($btn['type']) && $btn['type'] === 'postback') {
+                if ($availableRows) {
+                    $button->setRows((int)($availableRows / $countButtons));
+                }
+
+                if ($isPostBack) {
                     $button
                         ->setActionType('reply')
-                        ->setActionBody($btn['url'])
+                        ->setActionBody($postBackData)
                         ->setSilent(true);
                 }
 

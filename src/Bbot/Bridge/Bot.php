@@ -4,6 +4,8 @@ namespace Bbot\Bridge;
 
 interface Bot
 {
+    public const VIEW_TYPE_CAROUSEL = 'VIEW_TYPE_CAROUSEL';
+
     public function sendText($text, array $options = []);
 
     public function sendFlashMessage(string $text, array $options = []);
