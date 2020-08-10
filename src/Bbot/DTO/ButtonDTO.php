@@ -8,7 +8,9 @@ class ButtonDTO
 
     private const TYPE_URL = 'TYPE_URL';
 
-    private const TYPES = [self::TYPE_POST_BACK, self::TYPE_URL];
+    private const TYPE_PHONE_REQUEST = 'TYPE_PHONE_REQUEST';
+
+    private const TYPES = [self::TYPE_POST_BACK, self::TYPE_URL, self::TYPE_PHONE_REQUEST];
 
     private string $name;
 
@@ -27,6 +29,15 @@ class ButtonDTO
 
         $self->setType(self::TYPE_POST_BACK);
         $self->setPostBackData($postBackData);
+
+        return $self;
+    }
+
+    public static function createPhoneRequest(string $name): self
+    {
+        $self = new static($name);
+
+        $self->setType(self::TYPE_PHONE_REQUEST);
 
         return $self;
     }
@@ -83,5 +94,10 @@ class ButtonDTO
     public function isPostBackType(): bool
     {
         return $this->type === self::TYPE_POST_BACK;
+    }
+
+    public function isPhoneRequestType(): bool
+    {
+        return $this->type === self::TYPE_PHONE_REQUEST;
     }
 }

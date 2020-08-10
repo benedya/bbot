@@ -2,6 +2,7 @@
 
 namespace Bbot\Bridge;
 
+use Bbot\DTO\ButtonDTO;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use TelegramBot\Api\Types\Inline\InputMessageContent\Text;
 use TelegramBot\Api\Types\Inline\QueryResult\Article;
@@ -74,7 +75,21 @@ class TelegramBot implements Bot
 
     public function sendKeyboard($text, array $keyboard, array $options = [])
     {
-        $item = new ReplyKeyboardMarkup($keyboard, false, true);
+        $preparedKeyboard = [];
+
+        foreach ($keyboard as $item) {
+            if ($item instanceof ButtonDTO) {
+                if ($item->isPhoneRequestType()) {
+                    $preparedKeyboard[] = [['text' => $item->getName(), 'request_contact' => true]];
+                } else {
+                    throw new \UnexpectedValueException(sprintf('Unsupported type.'));
+                }
+            } else {
+                $preparedKeyboard[] = $item;
+            }
+        }
+
+        $item = new ReplyKeyboardMarkup($preparedKeyboard, false, true);
 
         $this->bot->sendMessage(
             $this->chatId,

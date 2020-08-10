@@ -15,11 +15,7 @@ class ViberRequest implements Request
 
     public function isInlineQuery(): bool
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        return false;
     }
 
     public function isText(): bool
@@ -53,7 +49,16 @@ class ViberRequest implements Request
 
     public function getPostback()
     {
+        if ($this->isShareContact()) {
+            return null;
+        }
+
         return $this->data['message']['text'] ?? null;
+    }
+
+    private function isShareContact(): bool
+    {
+        return $this->data['message']['type'] === 'contact';
     }
 
     public function getMessageId(): string

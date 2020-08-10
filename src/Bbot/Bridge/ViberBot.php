@@ -52,19 +52,33 @@ class ViberBot implements Bot
         $buttons = [];
         $maxColumns = 6;
 
-        foreach ($items as $k => $button) {
-            if (is_array($button)) {
+        foreach ($items as $k => $buttonData) {
+            if (is_array($buttonData)) {
                 $buttons = array_merge(
                     $buttons,
-                    $this->buildKeyboard($button, (int)($maxColumns / count($button))),
+                    $this->buildKeyboard($buttonData, (int)($maxColumns / count($buttonData))),
                 );
                 continue;
             }
 
-            $buttons[] = (new \Viber\Api\Keyboard\Button())
-                    ->setColumns($columns)
-                    ->setActionBody($button)
-                    ->setText($button);
+
+            $button = (new \Viber\Api\Keyboard\Button())
+                ->setColumns($columns)
+            ;
+
+            if ($buttonData instanceof ButtonDTO) {
+                if ($buttonData->isPhoneRequestType()) {
+                    $button->setActionType('share-phone');
+                }
+
+                $button
+                    ->setActionBody($buttonData->getName())
+                    ->setText($buttonData->getName());
+            } else {
+                $button->setActionBody($buttonData)->setText($buttonData);
+            }
+
+            $buttons[] = $button;
         }
 
         return $buttons;
@@ -80,6 +94,7 @@ class ViberBot implements Bot
                 ->setKeyboard(
                     (new \Viber\Api\Keyboard())->setButtons($this->buildKeyboard($keyboard))
                 )
+            ->setMinApiVersion(3) // todo to make it depended on smth?
         );
     }
 
@@ -126,6 +141,7 @@ class ViberBot implements Bot
                     throw new \UnexpectedValueException('Unexpected button type.');
                 }
 
+                $usedRows = 0;
                 $countButtons = count($itemWithButtons->getButtons());
 
                 if ($countButtons + $captionRows > $maxAllowedRows) {
@@ -133,34 +149,42 @@ class ViberBot implements Bot
                 }
 
                 if ($itemWithButtons->getImageUrl()) {
-                    $readyToSendButtons[] = (new \Viber\Api\Keyboard\Button())
+                    $button = (new \Viber\Api\Keyboard\Button())
                         ->setRows($maxAllowedRows - $countButtons - $captionRows)
                         ->setActionType('none')
                         ->setImage($itemWithButtons->getImageUrl())
                     ;
+
+                    $usedRows += $button->getRows();
+
+                    $readyToSendButtons[] = $button;
                 }
 
                 $text = $itemWithButtons->getParameter('viber_name') ?? $itemWithButtons->getName();
 
-                $readyToSendButtons[] = (new \Viber\Api\Keyboard\Button())
-                    ->setRows($itemWithButtons->getImageUrl() ? $captionRows: $maxAllowedRows - $countButtons)
-                    ->setActionType('none')
-                    ->setTextHAlign('left')
-//                    ->setTextHAlign('bottom')
-                    ->setText($text)
-                    ->setTextSize('medium')
-                    ->setBgColor('#ffffff')
-                ;
+                if (!empty($text)) {
+                    $button = (new \Viber\Api\Keyboard\Button())
+                        ->setRows($itemWithButtons->getImageUrl() ? $captionRows: $maxAllowedRows - $countButtons)
+                        ->setActionType('none')
+                        ->setTextHAlign('left')
+                        ->setText($text)
+                        ->setTextSize('medium')
+                        ->setBgColor('#ffffff')
+                    ;
+                    $usedRows += $button->getRows();
+
+                    $readyToSendButtons[] = $button;
+                }
 
                 $readyToSendButtons = array_merge(
                     $readyToSendButtons,
                     $this->buildButtons(
-                        $itemWithButtons->getButtons()
+                        $itemWithButtons->getButtons(),
+                        1,
+                        $maxAllowedRows - $usedRows,
                     )
                 );
             }
-
-//            throw new \Exception(print_r($readyToSendButtons, true));
 
             $this->client->sendMessage(
                 (new \Viber\Api\Message\CarouselContent())
@@ -212,6 +236,7 @@ class ViberBot implements Bot
 
         $buttons = [];
         $maxButtonsInLine = 6;
+        $countButtonsRows = count($data);
 
         foreach ($data as $line) {
             $countButtons = count($line);
@@ -242,7 +267,7 @@ class ViberBot implements Bot
                     ;
 
                 if ($availableRows) {
-                    $button->setRows((int)($availableRows / $countButtons));
+                    $button->setRows((int)($availableRows / $countButtonsRows));
                 }
 
                 if ($isPostBack) {
@@ -279,11 +304,7 @@ class ViberBot implements Bot
 
     public function deleteMessage(array $data)
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        // it is supported by viber?
     }
 
     public function sendQueryResults(array $data, array $options = [])
