@@ -9,6 +9,8 @@ use Viber\Api\Sender;
 
 class ViberBot implements Bot
 {
+    public const MAX_CAROUSEL_ITEMS = 6;
+
     private Client $client;
 
     private string $senderName;
@@ -92,7 +94,8 @@ class ViberBot implements Bot
                 ->setReceiver($this->senderId)
                 ->setText($text)
                 ->setKeyboard(
-                    (new \Viber\Api\Keyboard())->setButtons($this->buildKeyboard($keyboard))
+                    (new \Viber\Api\Keyboard())
+                        ->setButtons($this->buildKeyboard($keyboard))
                 )
             ->setMinApiVersion(3) // todo to make it depended on smth?
         );
@@ -129,103 +132,94 @@ class ViberBot implements Bot
     {
         $viewType = $options['view_type'] ?? '';
         $buttons = $data['buttons'];
+        $captionArea = [];
 
-        if ($viewType === self::VIEW_TYPE_CAROUSEL) {
-            $readyToSendButtons = [];
-            $captionRows = 2;
-            $maxAllowedRows = 7;
-            $maxAllowedColumns = 6;
-
-            foreach ($buttons as $itemWithButtons) {
-                if (!$itemWithButtons instanceof ItemWithButtonsDTO) {
-                    throw new \UnexpectedValueException('Unexpected button type.');
-                }
-
-                $usedRows = 0;
-                $countButtons = count($itemWithButtons->getButtons());
-
-                if ($countButtons + $captionRows > $maxAllowedRows) {
-                    throw new \Exception('Reached max allowed rows.');
-                }
-
-                if ($itemWithButtons->getImageUrl()) {
-                    $button = (new \Viber\Api\Keyboard\Button())
-                        ->setRows($maxAllowedRows - $countButtons - $captionRows)
-                        ->setActionType('none')
-                        ->setImage($itemWithButtons->getImageUrl())
-                    ;
-
-                    $usedRows += $button->getRows();
-
-                    $readyToSendButtons[] = $button;
-                }
-
-                $text = $itemWithButtons->getParameter('viber_name') ?? $itemWithButtons->getName();
-
-                if (!empty($text)) {
-                    $button = (new \Viber\Api\Keyboard\Button())
-                        ->setRows($itemWithButtons->getImageUrl() ? $captionRows: $maxAllowedRows - $countButtons)
-                        ->setActionType('none')
-                        ->setTextHAlign('left')
-                        ->setText($text)
-                        ->setTextSize('medium')
-                        ->setBgColor('#ffffff')
-                    ;
-                    $usedRows += $button->getRows();
-
-                    $readyToSendButtons[] = $button;
-                }
-
-                $readyToSendButtons = array_merge(
-                    $readyToSendButtons,
-                    $this->buildButtons(
-                        $itemWithButtons->getButtons(),
-                        1,
-                        $maxAllowedRows - $usedRows,
-                    )
-                );
-            }
-
-            $this->client->sendMessage(
-                (new \Viber\Api\Message\CarouselContent())
-                    ->setSender($this->getSender())
-                    ->setReceiver($this->senderId)
-                    ->setButtonsGroupColumns($maxAllowedColumns)
-                    ->setButtonsGroupRows($maxAllowedRows)
-                    ->setButtons($readyToSendButtons)
-            );
-        } else {
-            $captionArea = [];
-
-            if (isset($data['caption'])) {
-                $captionArea = (new \Viber\Api\Keyboard\Button())
-                    ->setRows(2)
-                    ->setActionType('none')
-                    ->setText($data['caption'])
-                    ->setBgColor('#ffffff');
-            }
-
-            $buttons = $this->buildButtons($buttons);
-
-            $this->client->sendMessage(
-                (new \Viber\Api\Message\CarouselContent())
-                    ->setSender($this->getSender())
-                    ->setReceiver($this->senderId)
-                    ->setButtonsGroupRows(count($buttons) + 2)
-                    ->setButtons(
-                        $captionArea ? array_merge([$captionArea], $buttons) : $buttons
-                    )
-            );
+        if (isset($data['caption'])) {
+            $captionArea = (new \Viber\Api\Keyboard\Button())
+                ->setRows(2)
+                ->setActionType('none')
+                ->setText($data['caption'])
+                ->setBgColor('#ffffff');
         }
+
+        $buttons = $this->buildButtons($buttons);
+
+        $this->client->sendMessage(
+            (new \Viber\Api\Message\CarouselContent())
+                ->setSender($this->getSender())
+                ->setReceiver($this->senderId)
+                ->setButtonsGroupRows(count($buttons) + 2)
+                ->setButtons(
+                    $captionArea ? array_merge([$captionArea], $buttons) : $buttons
+                )
+        );
     }
 
     public function sendListItems(array $items)
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        $readyToSendButtons = [];
+        $captionRows = 2;
+        $maxAllowedRows = 7;
+        $maxAllowedColumns = 6;
+
+        foreach ($items as $itemWithButtons) {
+            if (!$itemWithButtons instanceof ItemWithButtonsDTO) {
+                throw new \UnexpectedValueException('Unexpected button type.');
+            }
+
+            $usedRows = 0;
+            $countButtons = count($itemWithButtons->getButtons());
+
+            if ($countButtons + $captionRows > $maxAllowedRows) {
+                throw new \Exception('Reached max allowed rows.');
+            }
+
+            if ($itemWithButtons->getImageUrl()) {
+                $button = (new \Viber\Api\Keyboard\Button())
+                    ->setRows($maxAllowedRows - $countButtons - $captionRows)
+                    ->setActionType('none')
+                    ->setImage($itemWithButtons->getImageUrl())
+                ;
+
+                $usedRows += $button->getRows();
+
+                $readyToSendButtons[] = $button;
+            }
+
+            $text = $itemWithButtons->getParameter('viber_name') ?? $itemWithButtons->getName();
+
+            if (!empty($text)) {
+                $button = (new \Viber\Api\Keyboard\Button())
+                    ->setRows($itemWithButtons->getImageUrl() ? $captionRows: $maxAllowedRows - $countButtons)
+                    ->setActionType('none')
+                    ->setTextHAlign('left')
+                    ->setText($text)
+                    ->setTextSize('medium')
+                    ->setBgColor('#ffffff')
+                ;
+                $usedRows += $button->getRows();
+
+                $readyToSendButtons[] = $button;
+            }
+
+            $readyToSendButtons = array_merge(
+                $readyToSendButtons,
+                $this->buildButtons(
+                    $itemWithButtons->getButtons(),
+                    1,
+                    $maxAllowedRows - $usedRows,
+                    )
+            );
+        }
+
+        $this->client->sendMessage(
+            (new \Viber\Api\Message\CarouselContent())
+                ->setSender($this->getSender())
+                ->setReceiver($this->senderId)
+                ->setButtonsGroupColumns($maxAllowedColumns)
+                ->setButtonsGroupRows($maxAllowedRows)
+                ->setButtons($readyToSendButtons)
+        );
     }
 
     public function buildButtons(array $data, int $countInRow = 1, int $availableRows = null)
