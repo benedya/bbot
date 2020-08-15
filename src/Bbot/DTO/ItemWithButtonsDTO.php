@@ -18,6 +18,12 @@ class ItemWithButtonsDTO
         $this->name = $name;
     }
 
+    public function toButtons(): array
+    {
+        $button = new ButtonDTO($this->name);
+
+    }
+
     public function addButton(ButtonDTO $buttonDTO): self
     {
         $this->buttons[] = $buttonDTO;

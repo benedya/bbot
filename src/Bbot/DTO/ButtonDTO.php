@@ -2,7 +2,7 @@
 
 namespace Bbot\DTO;
 
-class ButtonDTO
+class ButtonDTO implements CompositeButtonInterface
 {
     private const TYPE_POST_BACK = 'TYPE_POST_BACK';
 
@@ -18,9 +18,62 @@ class ButtonDTO
 
     private ?string $postBackData = null;
 
+    private ?string $imageUrl = null;
+
+    private array $buttons = [];
+
+    private array $parameters = [];
+
+    private ?CompositeButtonInterface $parentButton = null;
+
     public function __construct(string $name)
     {
         $this->name = $name;
+    }
+
+    public function setParentButton(CompositeButtonInterface $button): self
+    {
+        $this->parentButton = $button;
+
+        return $this;
+    }
+
+    public function getParentButton(): ?CompositeButtonInterface
+    {
+        return $this->parentButton;
+    }
+
+    public function addButton(CompositeButtonInterface $button): self
+    {
+        $button->setParentButton($this);
+
+        $this->buttons[] = $button;
+
+        return $this;
+    }
+
+    public function getButtons(): iterable
+    {
+        return $this->buttons;
+    }
+
+    public function setButtons(iterable $buttons): self
+    {
+        foreach ($buttons as $button) {
+            $this->addButton($button);
+        }
+
+        return $this;
+    }
+
+    public function getCountButtons(): int
+    {
+        return count($this->buttons);
+    }
+
+    public function hasButtons(): bool
+    {
+        return $this->getCountButtons() > 0;
     }
 
     public static function createPostBack(string $name, string $postBackData): self
@@ -63,6 +116,18 @@ class ButtonDTO
         return $this;
     }
 
+    public function setImageUrl(?string $imageUrl): ButtonDTO
+    {
+        $this->imageUrl = $imageUrl;
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
     private function checkType(?string $type): void
     {
         if ($type && !in_array($type, self::TYPES)) {
@@ -99,5 +164,17 @@ class ButtonDTO
     public function isPhoneRequestType(): bool
     {
         return $this->type === self::TYPE_PHONE_REQUEST;
+    }
+
+    public function addParameter(string $key, string $value): self
+    {
+        $this->parameters[$key] = $value;
+
+        return $this;
+    }
+
+    public function getParameter(string $key): ?string
+    {
+        return $this->parameters[$key] ?? null;
     }
 }

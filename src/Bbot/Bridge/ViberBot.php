@@ -3,6 +3,7 @@
 namespace Bbot\Bridge;
 
 use Bbot\DTO\ButtonDTO;
+use Bbot\DTO\CompositeButtonInterface;
 use Bbot\DTO\ItemWithButtonsDTO;
 use Viber\Client;
 use Viber\Api\Sender;
@@ -92,7 +93,7 @@ class ViberBot implements Bot
             (new \Viber\Api\Message\Text())
                 ->setSender($this->getSender())
                 ->setReceiver($this->senderId)
-                ->setText($text)
+                ->setText(strip_tags($text))
                 ->setKeyboard(
                     (new \Viber\Api\Keyboard())
                         ->setButtons($this->buildKeyboard($keyboard))
@@ -132,27 +133,29 @@ class ViberBot implements Bot
     {
         $viewType = $options['view_type'] ?? '';
         $buttons = $data['buttons'];
-        $captionArea = [];
-
-        if (isset($data['caption'])) {
-            $captionArea = (new \Viber\Api\Keyboard\Button())
-                ->setRows(2)
-                ->setActionType('none')
-                ->setText($data['caption'])
-                ->setBgColor('#ffffff');
-        }
-
+        $caption = $data['caption'] ?? null;
         $buttons = $this->buildButtons($buttons);
 
-        $this->client->sendMessage(
-            (new \Viber\Api\Message\CarouselContent())
-                ->setSender($this->getSender())
-                ->setReceiver($this->senderId)
-                ->setButtonsGroupRows(count($buttons) + 2)
-                ->setButtons(
-                    $captionArea ? array_merge([$captionArea], $buttons) : $buttons
-                )
-        );
+        if ($caption) {
+            $this->client->sendMessage(
+                (new \Viber\Api\Message\Text())
+                    ->setSender($this->getSender())
+                    ->setReceiver($this->senderId)
+                    ->setText(strip_tags($caption)) // tags not supported
+                    ->setKeyboard(
+                        (new \Viber\Api\Keyboard())->setButtons($buttons)
+                    )
+                    ->setMinApiVersion(3) // todo to make it depended on smth?
+            );
+        } else {
+            $this->client->sendMessage(
+                (new \Viber\Api\Message\CarouselContent())
+                    ->setSender($this->getSender())
+                    ->setReceiver($this->senderId)
+                    ->setButtonsGroupRows(count($buttons) + 2)
+                    ->setButtons($buttons)
+            );
+        }
     }
 
     public function sendListItems(array $items)
@@ -163,7 +166,7 @@ class ViberBot implements Bot
         $maxAllowedColumns = 6;
 
         foreach ($items as $itemWithButtons) {
-            if (!$itemWithButtons instanceof ItemWithButtonsDTO) {
+            if (!$itemWithButtons instanceof CompositeButtonInterface) {
                 throw new \UnexpectedValueException('Unexpected button type.');
             }
 
@@ -222,35 +225,61 @@ class ViberBot implements Bot
         );
     }
 
-    public function buildButtons(array $data, int $countInRow = 1, int $availableRows = null)
+    public function buildButtons(array $data, int $countInRow = 1, int $availableRows = null, bool $isRecursion = false)
     {
         if ($countInRow !== -1) {
             $data = array_chunk($data, $countInRow);
         }
 
+        if ($isRecursion) {
+//            throw new \Exception(print_r($data, true));
+
+        }
         $buttons = [];
         $maxButtonsInLine = 6;
         $countButtonsRows = count($data);
-
+        $maxColumns = 6;
         foreach ($data as $line) {
             $countButtons = count($line);
 
             foreach ($line as $btn) {
+                if ($btn instanceof ButtonDTO && $btn->hasButtons() && !$isRecursion) {
+
+                    $buttons = array_merge(
+                        $buttons,
+                        $this->buildButtons(
+                            array_merge([$btn], $btn->getButtons()),
+                            (int)($maxColumns / $btn->getCountButtons()),
+                            null,
+                            true
+                        ),
+                    );
+
+
+                    continue;
+                }
+
+                $isPostBack = false;
+                $postBackData = [];
+
                 if ($btn instanceof ButtonDTO) {
                     $actionType = $btn->getType();
                     $text = $btn->getName();
                     $isPostBack = $btn->isPostBackType();
                     $postBackData = $btn->getPostBackData();
-                } else {
+                } else if (is_array($btn)) {
+
                     $actionType = $btn['type'] ?? 'reply';
                     $text = $btn['title'];
                     $isPostBack = $actionType === 'postback';
                     $postBackData = $btn['url'];
+                } else {
+                    $actionType = null;
+                    $text = $btn;
                 }
 
                 $button = (new \Viber\Api\Keyboard\Button())
                     ->setColumns((int)($maxButtonsInLine / $countButtons))
-
                     ->setActionType($actionType)
                     ->setText(sprintf(
                         '<span style="color: %s;">%s</span>',
@@ -259,6 +288,12 @@ class ViberBot implements Bot
                     ))
                     ->setBgColor('#7C69E9')
                     ;
+
+                if ($btn instanceof ButtonDTO) {
+                    if ($btn->getImageUrl()) {
+                        $button->setImage($btn->getImageUrl());
+                    }
+                }
 
                 if ($availableRows) {
                     $button->setRows((int)($availableRows / $countButtonsRows));
@@ -275,7 +310,16 @@ class ViberBot implements Bot
             }
         }
 
+        if ($isRecursion) {
+//            $this->d($buttons);
+        }
+
         return $buttons;
+    }
+
+    private function d($o)
+    {
+        throw new \Exception(print_r($o, 1));
     }
 
     public function buildItemWithButtons(array $data, array $buttons)

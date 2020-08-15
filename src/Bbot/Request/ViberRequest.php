@@ -24,7 +24,12 @@ class ViberRequest implements Request
             return false;
         }
 
-        return $this->data['message']['type'] === 'text';
+        return ($this->data['message']['type']  ?? null) === 'text';
+    }
+
+    public function isStartMessage(): bool
+    {
+        return ($this->data['event']  ?? null) === 'conversation_started';
     }
 
     public function isCommand(): bool
@@ -34,7 +39,7 @@ class ViberRequest implements Request
 
     public function getTextMessage(): string
     {
-        return $this->data['message']['text'];
+        return $this->data['message']['text'] ?? '';
     }
 
     public function get(string $key)
@@ -58,7 +63,7 @@ class ViberRequest implements Request
 
     private function isShareContact(): bool
     {
-        return $this->data['message']['type'] === 'contact';
+        return ($this->data['message']['type'] ?? null) === 'contact';
     }
 
     public function getMessageId(): string
