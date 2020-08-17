@@ -210,19 +210,10 @@ class TelegramBot implements Bot
             $listBtns = [];
 
             foreach ($line as $btn) {
-                $btnItem = [
-                    'text' => $btn['title'],
-                ];
-
-                if (isset($btn['switch_inline_query_current_chat'])) {
-                    $btnItem['switch_inline_query_current_chat'] = $btn['switch_inline_query_current_chat'];
-                } elseif (isset($btn['type'])) {
-                    $type = ('postback' === $btn['type']) ? 'callback_data' : 'url';
-                    $btnItem[$type] = $btn['url'];
-                }
-
-                if (isset($btn['options'])) {
-                    $btnItem = array_merge($btnItem, $btn['options']);
+                if ($btn instanceof ButtonDTO) {
+                    $btnItem = $this->createButtonFromDTO($btn);
+                } else {
+                    $btnItem = $this->createButtonFromArray($btn);
                 }
 
                 $listBtns[] = $btnItem;
@@ -232,6 +223,39 @@ class TelegramBot implements Bot
         }
 
         return new InlineKeyboardMarkup($buttons);
+    }
+
+    private function createButtonFromDTO(ButtonDTO $buttonDTO): array
+    {
+        $btnItem = [
+            'text' => $buttonDTO->getName(),
+        ];
+
+        if ($buttonDTO->isPostBackType()) {
+            $btnItem['callback_data'] = $buttonDTO->getPostBackData();
+        }
+
+        return $btnItem;
+    }
+
+    private function createButtonFromArray(array $btn): array
+    {
+        $btnItem = [
+            'text' => $btn['title'],
+        ];
+
+        if (isset($btn['switch_inline_query_current_chat'])) {
+            $btnItem['switch_inline_query_current_chat'] = $btn['switch_inline_query_current_chat'];
+        } elseif (isset($btn['type'])) {
+            $type = ('postback' === $btn['type']) ? 'callback_data' : 'url';
+            $btnItem[$type] = $btn['url'];
+        }
+
+        if (isset($btn['options'])) {
+            $btnItem = array_merge($btnItem, $btn['options']);
+        }
+
+        return $btnItem;
     }
 
     public function buildItemWithButtons(array $data, array $buttons = [])

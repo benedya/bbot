@@ -81,6 +81,8 @@ class ViberBot implements Bot
                 $button->setActionBody($buttonData)->setText($buttonData);
             }
 
+            $button->setBgColor('#7C69E9');
+
             $buttons[] = $button;
         }
 
@@ -96,7 +98,7 @@ class ViberBot implements Bot
                 ->setText(strip_tags($text))
                 ->setKeyboard(
                     (new \Viber\Api\Keyboard())
-                        ->setButtons($this->buildKeyboard($keyboard))
+                        ->setButtons($this->buildButtons($keyboard, -1))
                 )
             ->setMinApiVersion(3) // todo to make it depended on smth?
         );
@@ -231,10 +233,6 @@ class ViberBot implements Bot
             $data = array_chunk($data, $countInRow);
         }
 
-        if ($isRecursion) {
-//            throw new \Exception(print_r($data, true));
-
-        }
         $buttons = [];
         $maxButtonsInLine = 6;
         $countButtonsRows = count($data);
@@ -268,7 +266,6 @@ class ViberBot implements Bot
                     $isPostBack = $btn->isPostBackType();
                     $postBackData = $btn->getPostBackData();
                 } else if (is_array($btn)) {
-
                     $actionType = $btn['type'] ?? 'reply';
                     $text = $btn['title'];
                     $isPostBack = $actionType === 'postback';
@@ -310,16 +307,7 @@ class ViberBot implements Bot
             }
         }
 
-        if ($isRecursion) {
-//            $this->d($buttons);
-        }
-
         return $buttons;
-    }
-
-    private function d($o)
-    {
-        throw new \Exception(print_r($o, 1));
     }
 
     public function buildItemWithButtons(array $data, array $buttons)
