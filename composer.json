@@ -21,7 +21,8 @@
     "pimax/fb-messenger-php": "^1.0",
     "telegram-bot/api": "^2.3",
     "psr/container": "@stable",
-    "pimple/pimple": "^3.0"
+    "pimple/pimple": "^3.0",
+    "bogdaan/viber-bot-php": "^0.0.14"
   },
   "autoload": {
     "psr-0": {
