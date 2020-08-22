@@ -91,6 +91,12 @@ class ViberBot implements Bot
 
     public function sendKeyboard($text, array $keyboard, array $options = [])
     {
+        $countInRow = -1;
+
+        if (count($keyboard) === 1 && !is_array($keyboard['0'])) {
+            $countInRow = 1;
+        }
+
         $this->client->sendMessage(
             (new \Viber\Api\Message\Text())
                 ->setSender($this->getSender())
@@ -98,7 +104,7 @@ class ViberBot implements Bot
                 ->setText(strip_tags($text))
                 ->setKeyboard(
                     (new \Viber\Api\Keyboard())
-                        ->setButtons($this->buildButtons($keyboard, -1))
+                        ->setButtons($this->buildButtons($keyboard, $countInRow))
                 )
             ->setMinApiVersion(3) // todo to make it depended on smth?
         );
@@ -259,12 +265,18 @@ class ViberBot implements Bot
 
                 $isPostBack = false;
                 $postBackData = [];
+                $actionBody = null;
 
                 if ($btn instanceof ButtonDTO) {
                     $actionType = $btn->getType();
                     $text = $btn->getName();
                     $isPostBack = $btn->isPostBackType();
                     $postBackData = $btn->getPostBackData();
+
+                    if ($btn->isPhoneRequestType()) {
+                        $actionType= 'share-phone';
+                        $actionBody = $text;
+                    }
                 } else if (is_array($btn)) {
                     $actionType = $btn['type'] ?? 'reply';
                     $text = $btn['title'];
@@ -273,11 +285,13 @@ class ViberBot implements Bot
                 } else {
                     $actionType = null;
                     $text = $btn;
+                    $actionBody = $text;
                 }
 
                 $button = (new \Viber\Api\Keyboard\Button())
                     ->setColumns((int)($maxButtonsInLine / $countButtons))
                     ->setActionType($actionType)
+                    ->setActionBody($actionBody)
                     ->setText(sprintf(
                         '<span style="color: %s;">%s</span>',
                         '#ffffff',
