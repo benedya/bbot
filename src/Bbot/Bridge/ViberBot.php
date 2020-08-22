@@ -293,7 +293,7 @@ class ViberBot implements Bot
                     ->setActionType($actionType)
                     ->setActionBody($actionBody)
                     ->setText(sprintf(
-                        '<span style="color: %s;">%s</span>',
+                        '<font style="color: %s">%s</font>',
                         '#ffffff',
                         $text
                     ))
