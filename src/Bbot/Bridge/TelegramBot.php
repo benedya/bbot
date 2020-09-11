@@ -157,7 +157,7 @@ class TelegramBot implements Bot
             new \CURLFile($path),
             $caption,
             $data['replyToMessageId'] ?? false,
-            is_array($buttons) && count($buttons) ? $buttons : null,
+            ($buttons instanceof InlineKeyboardMarkup) ? $buttons : null,
             $data['disableNotification'] ?? false,
             $data['parseMode'] ?? null
         );
