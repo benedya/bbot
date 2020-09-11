@@ -145,7 +145,7 @@ class TelegramBot implements Bot
         if (is_array($caption)) {
             $data = $caption;
             $caption = $data['caption'];
-            $buttons = $data['buttons'];
+            $buttons = $data['buttons'] ?? [];
             // if buttons were not built yet - build it now
             if (is_array($buttons)) {
                 $buttons = $this->buildButtons($buttons, $data['countInRow'] ?? 1);
@@ -157,7 +157,7 @@ class TelegramBot implements Bot
             new \CURLFile($path),
             $caption,
             $data['replyToMessageId'] ?? false,
-            $buttons,
+            is_array($buttons) && count($buttons) ? $buttons : null,
             $data['disableNotification'] ?? false,
             $data['parseMode'] ?? null
         );

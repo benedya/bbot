@@ -112,11 +112,7 @@ class ViberBot implements Bot
 
     public function hideKeyboard($text, array $options = [])
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        // not existed
     }
 
     public function sendImg($path, $caption = null)
@@ -292,11 +288,7 @@ class ViberBot implements Bot
                     ->setColumns((int)($maxButtonsInLine / $countButtons))
                     ->setActionType($actionType)
                     ->setActionBody($actionBody)
-                    ->setText(sprintf(
-                        '<font style="color: %s">%s</font>',
-                        '#ffffff',
-                        $text
-                    ))
+                    ->setText('<font color=#ffffff>' .$text. '</font>')
                     ->setBgColor('#7C69E9')
                     ;
 
