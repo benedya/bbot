@@ -33,11 +33,7 @@ class TelegramRequest implements Request
 
     public function isStartMessage(): bool
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        return $this->isCommand() && $this->getTextMessage() === '/start';
     }
 
     public function getTextMessage(): string
