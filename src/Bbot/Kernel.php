@@ -7,6 +7,8 @@ use Bbot\Request\Request;
 use Psr\Container\ContainerInterface;
 use Pimple\Psr11\Container as PsrContainer;
 use Pimple\Container;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class Kernel
 {
@@ -19,10 +21,13 @@ class Kernel
     /** @var Bot */
     protected $bot;
 
-    public function __construct(array $serviceProviders, Bot $bot)
+    private LoggerInterface $logger;
+
+    public function __construct(array $serviceProviders, Bot $bot, LoggerInterface $logger = null)
     {
         $this->serviceProviders = $serviceProviders;
         $this->bot = $bot;
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function handle(Request $request)
@@ -101,7 +106,7 @@ class Kernel
             }
 
             if ($handlerData) {
-                list($controller, $action) = $processHandlerData($handlerData);
+                [$controller, $action] = $processHandlerData($handlerData);
             } else {
                 if (!$controller = $this->container->get($controllerKey)) {
                     throw new \Error(sprintf("Controller '%s' not found.", $controllerKey));
@@ -109,13 +114,20 @@ class Kernel
             }
         } else {
             if ($postback = $router->fromPostback($request)) {
-                list($controller, $action) = $processHandlerData($postback);
+                [$controller, $action] = $processHandlerData($postback);
 
                 if ($request->get('_removeable')) {
-                    $this->bot->deleteMessage([
-                        'chatId' => $request->getChatId(),
-                        'messageId' => $request->getMessageId(),
-                    ]);
+                    try {
+                        $this->bot->deleteMessage([
+                            'chatId' => $request->getChatId(),
+                            'messageId' => $request->getMessageId(),
+                        ]);
+                    } catch (\Exception $exception) {
+                        $this->logger->error(sprintf(
+                            'Can not remove the message. %s',
+                            $exception->getTraceAsString()
+                        ));
+                    }
                 }
             } elseif ($this->container->has('default_controller')) {
                 $controller = $this->container->get('default_controller');
@@ -147,5 +159,12 @@ class Kernel
 
             return [$controller, $action];
         }
+    }
+
+    public function setLogger(LoggerInterface $logger): self
+    {
+        $this->logger = $logger;
+
+        return $this;
     }
 }
