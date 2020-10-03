@@ -2,7 +2,7 @@
 
 namespace Bbot\DTO;
 
-class ButtonDTO implements CompositeButtonInterface
+class ButtonDTO implements CompositeButtonInterface, \JsonSerializable
 {
     private const TYPE_POST_BACK = 'TYPE_POST_BACK';
 
@@ -29,6 +29,41 @@ class ButtonDTO implements CompositeButtonInterface
     public function __construct(string $name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize(): array
+    {
+        return array_filter([
+            'name' => $this->name,
+            'type' => $this->type,
+            'postBackData' => $this->postBackData,
+            'imageUrl' => $this->imageUrl,
+            'buttons' => $this->buttons,
+            'parameters' => $this->parameters,
+        ], fn ($item) => !empty($item));
+    }
+
+    public static function fromArray(array $data): self
+    {
+        $self = new self('');
+
+        foreach ($data as $field => $value) {
+            $setter = 'set' . ucfirst($field);
+
+            if (!\method_exists($self, $setter)) {
+                throw new \BadMethodCallException(sprintf(
+                    'Method "%s" not exists.',
+                    get_class($self) . ':' . $setter
+                ));
+            }
+
+            $self->{$setter}($value);
+        }
+
+        return $self;
     }
 
     public function setParentButton(CompositeButtonInterface $button): self
