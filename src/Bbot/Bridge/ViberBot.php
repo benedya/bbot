@@ -117,11 +117,30 @@ class ViberBot implements Bot
 
     public function sendImg($path, $caption = null)
     {
-        throw new \Error(sprintf(
-            'Method "%s::%s" is not implemented yet.',
-            get_class($this),
-            __METHOD__
-        ));
+        $buttons = [];
+        // checks if there are buttons
+        if (is_array($caption)) {
+            $data = $caption;
+            $caption = $data['caption'];
+            $buttons = $data['buttons'] ?? [];
+            $buttons = $this->buildButtons($buttons);
+        }
+
+        if (!$caption) {
+            throw new \BadMethodCallException('Caption can not be empty.');
+        }
+
+        $this->client->sendMessage(
+            (new \Viber\Api\Message\Picture())
+                ->setMedia($path)
+                ->setSender($this->getSender())
+                ->setReceiver($this->senderId)
+                ->setText(strip_tags($caption)) // tags not supported
+                ->setKeyboard(
+                    (new \Viber\Api\Keyboard())->setButtons($buttons)
+                )
+                ->setMinApiVersion(3) // todo to make it depended on smth?
+        );
     }
 
     public function sendFile($path, $caption = null)
