@@ -281,6 +281,7 @@ class ViberBot implements Bot
                 $isPostBack = false;
                 $postBackData = [];
                 $actionBody = null;
+                $silent = false;
 
                 if ($btn instanceof ButtonDTO) {
                     $actionType = $btn->getType();
@@ -291,6 +292,12 @@ class ViberBot implements Bot
                     if ($btn->isPhoneRequestType()) {
                         $actionType= 'share-phone';
                         $actionBody = $text;
+                    }
+
+                    if ($btn->isUrlType()) {
+                        $actionType= 'open-url';
+                        $actionBody = $btn->getUrl();
+                        $silent = true;
                     }
                 } else if (is_array($btn)) {
                     $actionType = $btn['type'] ?? 'reply';
@@ -309,6 +316,7 @@ class ViberBot implements Bot
                     ->setActionBody($actionBody)
                     ->setText('<font color=#ffffff>' .$text. '</font>')
                     ->setBgColor('#7C69E9')
+                    ->setSilent($silent)
                     ;
 
                 if ($btn instanceof ButtonDTO) {

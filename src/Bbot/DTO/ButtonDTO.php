@@ -18,6 +18,8 @@ class ButtonDTO implements CompositeButtonInterface, \JsonSerializable
 
     private ?string $postBackData = null;
 
+    private ?string $url = null;
+
     private ?string $imageUrl = null;
 
     private array $buttons = [];
@@ -130,6 +132,16 @@ class ButtonDTO implements CompositeButtonInterface, \JsonSerializable
         return $self;
     }
 
+    public static function createUrl(string $name, string $url): self
+    {
+        $self = new static($name);
+
+        $self->setType(self::TYPE_URL);
+        $self->setUrl($url);
+
+        return $self;
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -161,6 +173,18 @@ class ButtonDTO implements CompositeButtonInterface, \JsonSerializable
     public function getImageUrl(): ?string
     {
         return $this->imageUrl;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): self
+    {
+        $this->url = $url;
+
+        return $this;
     }
 
     private function checkType(?string $type): void
@@ -199,6 +223,11 @@ class ButtonDTO implements CompositeButtonInterface, \JsonSerializable
     public function isPhoneRequestType(): bool
     {
         return $this->type === self::TYPE_PHONE_REQUEST;
+    }
+
+    public function isUrlType(): bool
+    {
+        return $this->type === self::TYPE_URL;
     }
 
     public function addParameter(string $key, string $value): self
