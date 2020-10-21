@@ -263,11 +263,10 @@ class ViberBot implements Bot
 
             foreach ($line as $btn) {
                 if ($btn instanceof ButtonDTO && $btn->hasButtons() && !$isRecursion) {
-
                     $buttons = array_merge(
                         $buttons,
                         $this->buildButtons(
-                            array_merge([$btn], $btn->getButtons()),
+                            array_filter(array_merge([$btn->getName() ? $btn : null], $btn->getButtons())),
                             (int)($maxColumns / $btn->getCountButtons()),
                             null,
                             true
