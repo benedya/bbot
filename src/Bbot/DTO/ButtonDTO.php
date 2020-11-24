@@ -10,7 +10,9 @@ class ButtonDTO implements CompositeButtonInterface, \JsonSerializable
 
     private const TYPE_PHONE_REQUEST = 'TYPE_PHONE_REQUEST';
 
-    private const TYPES = [self::TYPE_POST_BACK, self::TYPE_URL, self::TYPE_PHONE_REQUEST];
+    private const TYPE_LOCATION_REQUEST = 'TYPE_LOCATION_REQUEST';
+
+    private const TYPES = [self::TYPE_POST_BACK, self::TYPE_URL, self::TYPE_PHONE_REQUEST, self::TYPE_LOCATION_REQUEST];
 
     private string $name;
 
@@ -132,6 +134,15 @@ class ButtonDTO implements CompositeButtonInterface, \JsonSerializable
         return $self;
     }
 
+    public static function createLocationRequest(string $name): self
+    {
+        $self = new static($name);
+
+        $self->setType(self::TYPE_LOCATION_REQUEST);
+
+        return $self;
+    }
+
     public static function createUrl(string $name, string $url): self
     {
         $self = new static($name);
@@ -223,6 +234,11 @@ class ButtonDTO implements CompositeButtonInterface, \JsonSerializable
     public function isPhoneRequestType(): bool
     {
         return $this->type === self::TYPE_PHONE_REQUEST;
+    }
+
+    public function isLocationRequestType(): bool
+    {
+        return $this->type === self::TYPE_LOCATION_REQUEST;
     }
 
     public function isUrlType(): bool

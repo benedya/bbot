@@ -6,6 +6,8 @@ interface Request
 {
     public function isText(): bool;
 
+    public function getLocation(): ?array;
+
     public function isCommand(): bool;
 
     public function isStartMessage(): bool;

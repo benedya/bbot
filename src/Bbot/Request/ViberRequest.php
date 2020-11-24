@@ -13,6 +13,12 @@ class ViberRequest implements Request
         $this->data = $data;
     }
 
+    public function getLocation(): ?array
+    {
+        // todo not implemented yet
+        return null;
+    }
+
     public function isInlineQuery(): bool
     {
         return false;

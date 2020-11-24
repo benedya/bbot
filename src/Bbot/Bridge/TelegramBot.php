@@ -81,6 +81,8 @@ class TelegramBot implements Bot
             if ($item instanceof ButtonDTO) {
                 if ($item->isPhoneRequestType()) {
                     $preparedKeyboard[] = [['text' => $item->getName(), 'request_contact' => true]];
+                } elseif ($item->isLocationRequestType()) {
+                        $preparedKeyboard[] = [['text' => $item->getName(), 'request_location' => true]];
                 } else {
                     throw new \UnexpectedValueException(sprintf('Unsupported type.'));
                 }

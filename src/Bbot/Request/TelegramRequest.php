@@ -24,6 +24,24 @@ class TelegramRequest implements Request
         return isset($this->data['message']['text']) ? true : false;
     }
 
+    public function getLocation(): ?array
+    {
+        $location = $this->data['message']['location'] ?? [];
+
+        if (!$location) {
+            return null;
+        }
+
+        if (!isset($location['latitude']) || !isset($location['longitude'])) {
+            throw new \OutOfBoundsException('Location data not found.');
+        }
+
+        return [
+            'latitude' => $location['latitude'],
+            'longitude' => $location['longitude'],
+        ];
+    }
+
     public function isCommand(): bool
     {
         $type = $this->data['message']['entities']['0']['type'] ?? null;

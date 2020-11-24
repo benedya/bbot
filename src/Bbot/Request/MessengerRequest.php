@@ -4,6 +4,12 @@ namespace Bbot\Request;
 
 class MessengerRequest implements Request
 {
+    public function getLocation(): ?array
+    {
+        // todo not implemented yet
+        return null;
+    }
+
     public function isInlineQuery(): bool
     {
         throw new \Error(sprintf(
