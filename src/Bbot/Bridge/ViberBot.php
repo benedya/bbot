@@ -115,7 +115,7 @@ class ViberBot implements Bot
         // not existed
     }
 
-    public function sendImg($path, $caption = null)
+    public function sendImg($path, $caption = null, $isAnimation = false)
     {
         $buttons = [];
         // checks if there are buttons

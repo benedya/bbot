@@ -117,7 +117,7 @@ class TelegramBot implements Bot
         );
     }
 
-    public function sendImg($path, $caption = null)
+    public function sendImg($path, $caption = null, $isAnimation = false)
     {
         $tmpFile = false;
         // checks if there isset a local file using server variable
@@ -154,15 +154,28 @@ class TelegramBot implements Bot
             }
         }
 
-        $this->bot->sendPhoto(
-            $this->chatId,
-            new \CURLFile($path),
-            $caption,
-            $data['replyToMessageId'] ?? false,
-            ($buttons instanceof InlineKeyboardMarkup) ? $buttons : null,
-            $data['disableNotification'] ?? false,
-            $data['parseMode'] ?? null
-        );
+        if ($isAnimation) {
+            $this->bot->sendAnimation(
+                $this->chatId,
+                new \CURLFile($path),
+                null,
+                $caption,
+                $data['replyToMessageId'] ?? false,
+                ($buttons instanceof InlineKeyboardMarkup) ? $buttons : null,
+                $data['disableNotification'] ?? false,
+                $data['parseMode'] ?? null
+            );
+        } else {
+            $this->bot->sendPhoto(
+                $this->chatId,
+                new \CURLFile($path),
+                $caption,
+                $data['replyToMessageId'] ?? false,
+                ($buttons instanceof InlineKeyboardMarkup) ? $buttons : null,
+                $data['disableNotification'] ?? false,
+                $data['parseMode'] ?? null
+            );
+        }
 
         if ($tmpFile) {
             unlink($tmpFile);

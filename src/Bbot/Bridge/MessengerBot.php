@@ -40,7 +40,7 @@ class MessengerBot implements Bot
         ));
     }
 
-    public function sendImg($path, $caption = null)
+    public function sendImg($path, $caption = null, $isAnimation = false)
     {
         throw new \Error(sprintf(
             'Method "%s::%s" is not implemented yet.',

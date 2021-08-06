@@ -14,7 +14,7 @@ interface Bot
 
     public function hideKeyboard($text, array $options = []);
 
-    public function sendImg($path, $caption = null);
+    public function sendImg($path, $caption = null, $isAnimation = false);
 
     public function sendFile($path, $caption);
 
